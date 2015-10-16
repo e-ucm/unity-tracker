@@ -48,6 +48,7 @@ public class Net
 		if (www.error == null) {
 			requestListener.Result(www.text);
 		} else {
+			Debug.LogError(www.error);
 			requestListener.Error(www.error);
 		}
 	}

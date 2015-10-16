@@ -37,7 +37,6 @@ public class Tracker : MonoBehaviour
 
 	public Tracker ()
 	{
-		this.nextFlush = flushInterval;
 		startListener = new StartListener (this);
 		flushListener = new FlushListener (this);
 		trackHeaders.Add ("Content-Type", "application/json");
@@ -62,6 +61,7 @@ public class Tracker : MonoBehaviour
 
 	public void Start ()
 	{			
+		this.nextFlush = flushInterval;
 		this.net = new Net (this);
 		this.Connect ();
 	}
@@ -79,7 +79,7 @@ public class Tracker : MonoBehaviour
 			}
 		}
 			
-		if (flushRequested) {
+		if (connected && flushRequested) {
 			Flush ();
 		}
 	}
@@ -132,7 +132,7 @@ public class Tracker : MonoBehaviour
 	{
 		if (!error) {
 			if (debug) {
-				Debug.LogError ("Traces received by the server.");
+				Debug.Log ("Traces received by the server.");
 			}
 			sent.Clear ();
 		} else if (debug) {
