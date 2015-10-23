@@ -9,6 +9,7 @@
 // ------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using SimpleJSON;
 
 public class DefaultTraceFromat : Tracker.ITraceFormatter
 {
@@ -20,5 +21,9 @@ public class DefaultTraceFromat : Tracker.ITraceFormatter
 		}
 		return result;
 	}
-}
 
+    public void StartData(JSONNode data)
+    {
+
+    }
+}
