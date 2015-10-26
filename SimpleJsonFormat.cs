@@ -9,6 +9,8 @@
 // ------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using UnityEngine;
+using SimpleJSON;
 
 public class SimpleJsonFormat : Tracker.ITraceFormatter
 {
@@ -25,6 +27,11 @@ public class SimpleJsonFormat : Tracker.ITraceFormatter
 		}
 		return result.Substring(0, result.Length - 1) + "]";
 	}
+
+    public void StartData(JSONNode data)
+    {
+
+    }
 }
 
 

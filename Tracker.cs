@@ -6,12 +6,15 @@ using System.Net;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Collections;
+using SimpleJSON;
 
 public class Tracker : MonoBehaviour
 {
 	public interface ITraceFormatter
 	{
 		string Serialize (List<string> traces);
+
+        void StartData(JSONNode data);
 	}
 	
 	public const string start = "start/";
@@ -37,20 +40,24 @@ public class Tracker : MonoBehaviour
 
 	public Tracker ()
 	{
-		startListener = new StartListener (this);
 		flushListener = new FlushListener (this);
 		trackHeaders.Add ("Content-Type", "application/json");
 		switch (traceFormat) {
 		case "json":
 			traceFormatter = new SimpleJsonFormat ();
 			break;
+        case "xapi":
+            traceFormatter = new XApiFormat();
+            break;
 		default:
 			traceFormatter = new DefaultTraceFromat ();
 			break;
 		}
-	}
 
-	private void SetAuthToken (string authToken)
+        startListener = new StartListener(this, traceFormatter);
+    }
+
+    private void SetAuthToken (string authToken)
 	{
 		if (authToken != null) {
 			trackHeaders.Add ("Authorization", authToken);
@@ -60,11 +67,12 @@ public class Tracker : MonoBehaviour
 	}
 
 	public void Start ()
-	{			
-		this.nextFlush = flushInterval;
+	{
+        this.nextFlush = flushInterval;
 		this.net = new Net (this);
 		this.Connect ();
-	}
+        UnityEngine.Object.DontDestroyOnLoad(this);
+    }
 
 	public void Update ()
 	{
@@ -145,10 +153,12 @@ public class Tracker : MonoBehaviour
 	{
 
 		private Tracker tracker;
+        private ITraceFormatter traceFormatter;
 
-		public StartListener (Tracker tracker)
+		public StartListener (Tracker tracker, ITraceFormatter traceFormatter)
 		{
 			this.tracker = tracker;
+            this.traceFormatter = traceFormatter;
 		}
 
 		public void Result (string data)
@@ -156,9 +166,10 @@ public class Tracker : MonoBehaviour
 			if (tracker.debug) {
 				Debug.Log ("Start successfull");
 			}
-			var dict = MiniJSON.Json.Deserialize (data) as Dictionary<string,object>;
+            JSONNode dict = JSONNode.Parse(data);
 			tracker.SetAuthToken ((string)dict ["authToken"]);
-		}
+            traceFormatter.StartData(dict);
+        }
 		
 		public void Error (string error)
 		{
