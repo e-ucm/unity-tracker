@@ -27,21 +27,24 @@ public class Tracker : MonoBehaviour
 	private List<string> sent = new List<string> ();
 	private float nextFlush;
 	public float flushInterval = -1;
+	public string storageType = "local";
+	public string traceFormat = "csv";
 	public string host;
 	public string trackingCode;
-	public string authorization;
-	public string traceFormat = "json";
-	public string storageType = "local";
 	public Boolean debug = false;
 	private StartListener startListener;
 	private FlushListener flushListener;
+	private static Tracker tracker;
+
+	public static Tracker T(){
+		return tracker;
+	}
 
 	public Tracker ()
 	{
 		flushListener = new FlushListener (this);
-
-
 		startListener = new StartListener (this);
+		tracker = this;
 	}
 
 	private void SetConnected (bool connected)
@@ -54,7 +57,7 @@ public class Tracker : MonoBehaviour
 	{
 		switch (storageType) {
 		case "net":
-			storage = new NetStorage (this, host, trackingCode, authorization);
+			storage = new NetStorage (this, host, trackingCode);
 			break;
 		default:
 			String path = Application.persistentDataPath;

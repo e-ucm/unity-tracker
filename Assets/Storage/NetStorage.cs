@@ -20,13 +20,12 @@ public class NetStorage : Storage
 	/// <param name="host">Host of the collector server.</param>
 	/// <param name="trackingCode">Tracking code for the game.</param>
 	/// <param name="authorization">Authorization to start the tracking.</param>
-	public NetStorage (MonoBehaviour behaviour, string host, string trackingCode,
-	                  string authorization)
+	public NetStorage (MonoBehaviour behaviour, string host, string trackingCode)
 	{
 		this.net = new Net (behaviour);
 		this.host = host;
 		this.trackingCode = trackingCode;
-		this.authorization = authorization;
+		this.authorization = "a:";
 	}
 	
 	public void SetTracker (Tracker tracker)
