@@ -26,8 +26,32 @@ public class NetStorage : Storage
 		this.host = host;
 		this.trackingCode = trackingCode;
 		this.authorization = "a:";
+
+		string filePath = Application.dataPath + "/Assets/track.txt";
+		if (Application.platform != RuntimePlatform.WebGLPlayer)
+		{
+			filePath = "file:///" + filePath;
+		}
+
+		behaviour.StartCoroutine(WaitForRequest(www));
 	}
-	
+
+	/*
+	* If exist /Assets/tracker.txt in the root of proyect folder with the format
+	*          host;trackingCode
+	* the tracker will use this host and trackingCode for the connection.
+	*/
+	private IEnumerator WaitForRequest(WWW www)
+	{
+		yield return www;
+		string[] readLine = readLine.Split(';');
+		if(readLine.Length == 2)
+		{
+			host = readLine[0];
+			trackingCode = readLine[1];
+		}
+	}
+
 	public void SetTracker (Tracker tracker)
 	{
 		netStartListener = new NetStartListener (tracker, this);
@@ -38,6 +62,7 @@ public class NetStorage : Storage
 	{
 		Dictionary<string,string> headers = new Dictionary<string, string> ();
 		headers.Add ("Authorization", authorization);
+		netStartListener.SetTraceFormatter(startListener.GetTraceFormatter());
 		net.POST (host + start + trackingCode, null, headers, netStartListener);
 	}
 
@@ -62,7 +87,7 @@ public class NetStorage : Storage
 
 		protected override void ProcessData (JSONNode dict)
 		{
-			storage.SetAuthToken ((string)dict ["authToken"]);
+			storage.SetAuthToken (dict ["authToken"]);
 			base.ProcessData (dict);
 		}
 	}

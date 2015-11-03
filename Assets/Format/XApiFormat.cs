@@ -17,16 +17,16 @@ public class XApiFormat : Tracker.ITraceFormatter
 
     private List<JSONNode> statements = new List<JSONNode>();
 
-    private string activityId;
+    private string objectId;
     private JSONNode actor;
 
     public void StartData(JSONNode data)
     {
         actor = data["actor"];
-        activityId = (string)data["activityId"];
-        if (!activityId.EndsWith("/"))
+        objectId = data["objectId"].ToString();
+        if (!objectId.EndsWith("/"))
         {
-            activityId += "/";
+            objectId += "/";
         }
     }
 
@@ -57,19 +57,20 @@ public class XApiFormat : Tracker.ITraceFormatter
 
         statement.Add("verb", CreateVerb(parts[0]));
 
-        statement.Add("activity", CreateActivity(parts));
+        statement.Add("object", CreateActivity(parts));
 
-        if (parts.Length > 2)
-        {
-            JSONNode extensions = JSONNode.Parse("{}");
-            JSONNode extensionsChild = JSONNode.Parse("{ "+ EXT_PREFIX + "value : "+ parts[2]+ " }");
+		if (parts.Length > 2)
+		{
+			JSONNode extensions = JSONNode.Parse("{}");
+			JSONNode extensionsChild = JSONNode.Parse("{}");
+			extensionsChild.Add(EXT_PREFIX + "value", parts[2]);
 
-            extensions.Add("extensions", extensionsChild);
+			extensions.Add("extensions", extensionsChild);
 
-            statement.Add("result", extensions);
-        }
-        
-        return statement;
+			statement.Add("result", extensions);
+		}
+
+		return statement;
     }
 
     private JSONNode CreateVerb(string ev)
@@ -87,7 +88,11 @@ public class XApiFormat : Tracker.ITraceFormatter
         } else {
             id = ev;
         }
-        return JSONNode.Parse("{ id : " + VERB_PREFIX + id + "}");
+
+        JSONNode verb = JSONNode.Parse("{ id : }");
+        verb["id"] = VERB_PREFIX + id;
+
+        return verb;
     }
 
     private JSONNode CreateActivity(string[] parts)
@@ -105,7 +110,7 @@ public class XApiFormat : Tracker.ITraceFormatter
         } else {
             id = ev;
         }
-        return JSONNode.Parse("{ id : " + activityId + id + "/" + parts[1] + "}");
+        return JSONNode.Parse("{ id : " + objectId + id + "/" + parts[1] + "}");
     }
 }
 
