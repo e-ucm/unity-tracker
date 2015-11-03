@@ -9,7 +9,6 @@
 // ------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 using SimpleJSON;
 
 public class SimpleJsonFormat : Tracker.ITraceFormatter

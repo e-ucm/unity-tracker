@@ -1,12 +1,11 @@
 /// <summary>
 /// Gleaner Tracker Unity implementation.
 /// </summary>
-using System;
-using System.Net;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Collections;
 using SimpleJSON;
+using System;
 
 public class Tracker : MonoBehaviour
 {
@@ -16,7 +15,7 @@ public class Tracker : MonoBehaviour
 
 		void StartData (JSONNode data);
 	}
-	
+
 	private Storage storage;
 	private ITraceFormatter traceFormatter;
 	private bool sending;
@@ -55,39 +54,41 @@ public class Tracker : MonoBehaviour
 
 	public void Start ()
 	{
+		switch (traceFormat) {
+			case "json":
+				this.traceFormatter = new SimpleJsonFormat ();
+				break;
+			case "xapi":
+				this.traceFormatter = new XApiFormat ();
+				break;
+			default:
+				this.traceFormatter = new DefaultTraceFromat ();
+				break;
+		}
 		switch (storageType) {
-		case "net":
-			storage = new NetStorage (this, host, trackingCode);
-			break;
-		default:
-			String path = Application.persistentDataPath;
-			if (!path.EndsWith("/")){
-				path += "/";
-			}
-			path += "traces-" + traceFormat;
-			if (debug) {
-				Debug.Log ("Storing traces in " + path );
-			}
-			storage = new LocalStorage (path);
-			break;
+			case "net":
+				storage = new NetStorage (this, host, trackingCode);
+				break;
+			default:
+				String path = Application.persistentDataPath;
+				if (!path.EndsWith("/"))
+				{
+					path += "/";
+				}
+				path += "traces-" + traceFormat;
+				if (debug)
+				{
+					Debug.Log("Storing traces in " + path);
+				}
+				storage = new LocalStorage(path);
+				break;
 		}
 		storage.SetTracker (this);
-
-		switch (traceFormat) {
-		case "json":
-			traceFormatter = new SimpleJsonFormat ();
-			break;
-		case "xapi":
-			traceFormatter = new XApiFormat ();
-			break;
-		default:
-			traceFormatter = new DefaultTraceFromat ();
-			break;
-		}
-		startListener.SetTraceFormatter (traceFormatter);
-		this.nextFlush = flushInterval;
+		this.startListener.SetTraceFormatter (this.traceFormatter);
 		this.Connect ();
-		UnityEngine.Object.DontDestroyOnLoad (this);
+		this.nextFlush = flushInterval;
+
+		UnityEngine.Object.DontDestroyOnLoad(this);
 	}
 
 	public void Update ()
@@ -102,9 +103,9 @@ public class Tracker : MonoBehaviour
 				nextFlush += flushInterval;
 			}
 		}
-			
-		if (connected && flushRequested) {
-			Flush ();
+
+		if (flushRequested) {
+			Flush();
 		}
 	}
 
@@ -179,6 +180,11 @@ public class Tracker : MonoBehaviour
 			this.traceFormatter = traceFormatter;
 		}
 
+		public ITraceFormatter GetTraceFormatter ()
+		{
+			return traceFormatter;
+		}
+
 		public void Result (string data)
 		{
 			if (tracker.debug) {
@@ -186,12 +192,13 @@ public class Tracker : MonoBehaviour
 			}
 			try {
 				JSONNode dict = JSONNode.Parse (data);
-				ProcessData (dict);			            
+				this.ProcessData (dict);
 			} catch (Exception e) {
+				Debug.LogError(e);
 			}
 			tracker.SetConnected (true);
 		}
-		
+
 		public void Error (string error)
 		{
 			if (tracker.debug) {
