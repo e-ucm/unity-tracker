@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using SimpleJSON;
 using UnityEngine;
+using System.Collections;
 
 public class NetStorage : Storage
 {
@@ -13,7 +14,7 @@ public class NetStorage : Storage
 	private string authorization;
 	private NetStartListener netStartListener;
 	private Dictionary<string,string> trackHeaders = new Dictionary<string, string> ();
-	
+
 	/// <summary>
 	/// </summary>
 	/// <param name="net">An object to interact with the network.</param>
@@ -28,10 +29,13 @@ public class NetStorage : Storage
 		this.authorization = "a:";
 
 		string filePath = Application.dataPath + "/Assets/track.txt";
+
 		if (Application.platform != RuntimePlatform.WebGLPlayer)
 		{
 			filePath = "file:///" + filePath;
 		}
+
+		WWW www = new WWW(filePath);
 
 		behaviour.StartCoroutine(WaitForRequest(www));
 	}
@@ -44,11 +48,16 @@ public class NetStorage : Storage
 	private IEnumerator WaitForRequest(WWW www)
 	{
 		yield return www;
-		string[] readLine = readLine.Split(';');
-		if(readLine.Length == 2)
+		// check for errors
+		if (www.error == null)
 		{
-			host = readLine[0];
-			trackingCode = readLine[1];
+			string line = www.text;
+			string[] readLine = line.Split(';');
+			if (readLine.Length == 2)
+			{
+				host = readLine[0];
+				trackingCode = readLine[1];
+			}
 		}
 	}
 
@@ -75,11 +84,11 @@ public class NetStorage : Storage
 	{
 		trackHeaders.Add ("Authorization", authToken);
 	}
-	
+
 	public class NetStartListener : Tracker.StartListener
 	{
 		private NetStorage storage;
-		
+
 		public NetStartListener (Tracker tracker, NetStorage storage) : base(tracker)
 		{
 			this.storage = storage;
