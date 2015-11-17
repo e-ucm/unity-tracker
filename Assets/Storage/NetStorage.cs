@@ -64,18 +64,18 @@ public class NetStorage : Storage
 	public void SetTracker (Tracker tracker)
 	{
 		netStartListener = new NetStartListener (tracker, this);
+		netStartListener.SetTraceFormatter (tracker.GetTraceFormatter());
 		trackHeaders.Add ("Content-Type", "application/json");
 	}
 
-	public void Start (Tracker.StartListener startListener)
+	public void Start (Net.IRequestListener startListener)
 	{
 		Dictionary<string,string> headers = new Dictionary<string, string> ();
-		headers.Add ("Authorization", authorization);
-		netStartListener.SetTraceFormatter(startListener.GetTraceFormatter());
+		headers.Add ("Authorization", authorization);		
 		net.POST (host + start + trackingCode, null, headers, netStartListener);
 	}
 
-	public void Send (String data, Tracker.FlushListener flushListener)
+	public void Send (String data, Net.IRequestListener flushListener)
 	{
 		net.POST (host + track, System.Text.Encoding.UTF8.GetBytes (data), trackHeaders, flushListener);
 	}

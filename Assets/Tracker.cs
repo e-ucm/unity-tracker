@@ -9,6 +9,8 @@ using System;
 
 public class Tracker : MonoBehaviour
 {
+	public static DateTime START_DATE = new DateTime (1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
 	public interface ITraceFormatter
 	{
 		string Serialize (List<string> traces);
@@ -35,7 +37,8 @@ public class Tracker : MonoBehaviour
 	private FlushListener flushListener;
 	private static Tracker tracker;
 
-	public static Tracker T(){
+	public static Tracker T ()
+	{
 		return tracker;
 	}
 
@@ -44,6 +47,11 @@ public class Tracker : MonoBehaviour
 		flushListener = new FlushListener (this);
 		startListener = new StartListener (this);
 		tracker = this;
+	}
+
+	public ITraceFormatter GetTraceFormatter ()
+	{
+		return this.traceFormatter;
 	}
 
 	private void SetConnected (bool connected)
@@ -55,40 +63,38 @@ public class Tracker : MonoBehaviour
 	public void Start ()
 	{
 		switch (traceFormat) {
-			case "json":
-				this.traceFormatter = new SimpleJsonFormat ();
-				break;
-			case "xapi":
-				this.traceFormatter = new XApiFormat ();
-				break;
-			default:
-				this.traceFormatter = new DefaultTraceFromat ();
-				break;
+		case "json":
+			this.traceFormatter = new SimpleJsonFormat ();
+			break;
+		case "xapi":
+			this.traceFormatter = new XApiFormat ();
+			break;
+		default:
+			this.traceFormatter = new DefaultTraceFromat ();
+			break;
 		}
 		switch (storageType) {
-			case "net":
-				storage = new NetStorage (this, host, trackingCode);
-				break;
-			default:
-				String path = Application.persistentDataPath;
-				if (!path.EndsWith("/"))
-				{
-					path += "/";
-				}
-				path += "traces-" + traceFormat;
-				if (debug)
-				{
-					Debug.Log("Storing traces in " + path);
-				}
-				storage = new LocalStorage(path);
-				break;
+		case "net":
+			storage = new NetStorage (this, host, trackingCode);
+			break;
+		default:
+			String path = Application.persistentDataPath;
+			if (!path.EndsWith ("/")) {
+				path += "/";
+			}
+			path += "traces";
+			if (debug) {
+				Debug.Log ("Storing traces in " + path);
+			}
+			storage = new LocalStorage (path);
+			break;
 		}
 		storage.SetTracker (this);
 		this.startListener.SetTraceFormatter (this.traceFormatter);
 		this.Connect ();
 		this.nextFlush = flushInterval;
 
-		UnityEngine.Object.DontDestroyOnLoad(this);
+		UnityEngine.Object.DontDestroyOnLoad (this);
 	}
 
 	public void Update ()
@@ -105,7 +111,7 @@ public class Tracker : MonoBehaviour
 		}
 
 		if (flushRequested) {
-			Flush();
+			Flush ();
 		}
 	}
 
@@ -180,11 +186,6 @@ public class Tracker : MonoBehaviour
 			this.traceFormatter = traceFormatter;
 		}
 
-		public ITraceFormatter GetTraceFormatter ()
-		{
-			return traceFormatter;
-		}
-
 		public void Result (string data)
 		{
 			if (tracker.debug) {
@@ -194,7 +195,7 @@ public class Tracker : MonoBehaviour
 				JSONNode dict = JSONNode.Parse (data);
 				this.ProcessData (dict);
 			} catch (Exception e) {
-				Debug.LogError(e);
+				Debug.LogError (e);
 			}
 			tracker.SetConnected (true);
 		}
