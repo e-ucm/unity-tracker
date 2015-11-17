@@ -242,6 +242,8 @@ public class Tracker : MonoBehaviour
 	/// <param name="trace">A comma separated string with the values of the trace</param>
 	public void Trace (string trace)
 	{
+
+		trace = Math.Round (System.DateTime.Now.ToUniversalTime ().Subtract (START_DATE).TotalMilliseconds) + "," + trace;
 		if (debug) {
 			Debug.Log ("'" + trace + "' added to the queue.");
 		}
