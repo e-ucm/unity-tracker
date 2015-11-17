@@ -298,6 +298,27 @@ public class Tracker : MonoBehaviour
 	{
 		Trace ("var", varName, value.ToString ());
 	}
+
+	/// <summary>
+	/// Logs that the user clicked with the mouse/touched a particular target (e.g. an enemy, an ally, a button of the HUD, etc.).
+	/// </summary>
+	/// <param name="x">Horizontal coordinate of the mouse or touch event, in the game's coordinate system</param>
+	/// <param name="y">Vertical coordinate of the mouse or touch event, in the game's coordinate system</param>
+	/// <param name="target">Id of the element that was hit by the click.</param>
+	public void Click (float x, float y, string target)
+	{
+		Trace ("click", x.ToString (), y.ToString (), target);
+	}
+
+	/// <summary>
+	/// Logs that the user clicked with the mouse/tocuhed a particular point in the game scene. If an identified element is at that point, use <see cref="Tracker.Click(float,float,string)"/>
+	/// </summary>
+	/// <param name="x">Horizontal coordinate of the mouse or touch event, in the game's coordinate system</param>
+	/// <param name="y">Vertical coordinate of the mouse or touch event, in the game's coordinate system</param>
+	public void Click (float x, float y)
+	{
+		Trace ("click", x.ToString (), y.ToString ());
+	}
 }
 
 
