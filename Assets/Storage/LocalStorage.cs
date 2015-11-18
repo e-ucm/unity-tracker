@@ -3,36 +3,39 @@ using System.IO;
 
 public class LocalStorage : Storage
 {
-		
+
+	private string tracesPathPrefix;
 	private string tracesFile;
 		
-	public LocalStorage (string tracesFile)
+	public LocalStorage (string tracesPathPrefix)
 	{
-		this.tracesFile = tracesFile;
+		this.tracesPathPrefix = tracesPathPrefix;
 	}
 				
 	public void SetTracker (Tracker tracker)
 	{
 	}
 		
-	public void Start (Tracker.StartListener startListener)
+	public void Start (Net.IRequestListener startListener)
 	{
-		try {
-			File.AppendAllText (tracesFile, "--new session\n");
-			startListener.Result ("");
-		} catch (Exception e) {
-			startListener.Error (e.Message);
-		}
+		string now = System.DateTime.Now.ToString ().Replace('/', '_').Replace(':', '_');
+		tracesFile = tracesPathPrefix + now + ".csv";
+		Write ("session," + now + "\n", startListener);
 	}
 
-	public void Send (String data, Tracker.FlushListener flushListener)
+	public void Send (String data, Net.IRequestListener flushListener)
+	{
+		Write (data, flushListener);
+	}
+
+	private void Write (String data, Net.IRequestListener requestListener)
 	{
 		try {
 			File.AppendAllText (tracesFile, data);
-			flushListener.Result ("");
+			requestListener.Result ("");
 		} catch (Exception e) {
-			flushListener.Error (e.Message);
-		}
+			requestListener.Error (e.Message);
+		}	
 	}
 
 }

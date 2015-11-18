@@ -9,6 +9,8 @@ using System;
 
 public class Tracker : MonoBehaviour
 {
+	public static DateTime START_DATE = new DateTime (1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
 	public interface ITraceFormatter
 	{
 		string Serialize (List<string> traces);
@@ -35,7 +37,8 @@ public class Tracker : MonoBehaviour
 	private FlushListener flushListener;
 	private static Tracker tracker;
 
-	public static Tracker T(){
+	public static Tracker T ()
+	{
 		return tracker;
 	}
 
@@ -44,6 +47,11 @@ public class Tracker : MonoBehaviour
 		flushListener = new FlushListener (this);
 		startListener = new StartListener (this);
 		tracker = this;
+	}
+
+	public ITraceFormatter GetTraceFormatter ()
+	{
+		return this.traceFormatter;
 	}
 
 	private void SetConnected (bool connected)
@@ -55,40 +63,38 @@ public class Tracker : MonoBehaviour
 	public void Start ()
 	{
 		switch (traceFormat) {
-			case "json":
-				this.traceFormatter = new SimpleJsonFormat ();
-				break;
-			case "xapi":
-				this.traceFormatter = new XApiFormat ();
-				break;
-			default:
-				this.traceFormatter = new DefaultTraceFromat ();
-				break;
+		case "json":
+			this.traceFormatter = new SimpleJsonFormat ();
+			break;
+		case "xapi":
+			this.traceFormatter = new XApiFormat ();
+			break;
+		default:
+			this.traceFormatter = new DefaultTraceFromat ();
+			break;
 		}
 		switch (storageType) {
-			case "net":
-				storage = new NetStorage (this, host, trackingCode);
-				break;
-			default:
-				String path = Application.persistentDataPath;
-				if (!path.EndsWith("/"))
-				{
-					path += "/";
-				}
-				path += "traces-" + traceFormat;
-				if (debug)
-				{
-					Debug.Log("Storing traces in " + path);
-				}
-				storage = new LocalStorage(path);
-				break;
+		case "net":
+			storage = new NetStorage (this, host, trackingCode);
+			break;
+		default:
+			String path = Application.persistentDataPath;
+			if (!path.EndsWith ("/")) {
+				path += "/";
+			}
+			path += "traces";
+			if (debug) {
+				Debug.Log ("Storing traces in " + path);
+			}
+			storage = new LocalStorage (path);
+			break;
 		}
 		storage.SetTracker (this);
 		this.startListener.SetTraceFormatter (this.traceFormatter);
 		this.Connect ();
 		this.nextFlush = flushInterval;
 
-		UnityEngine.Object.DontDestroyOnLoad(this);
+		UnityEngine.Object.DontDestroyOnLoad (this);
 	}
 
 	public void Update ()
@@ -105,7 +111,7 @@ public class Tracker : MonoBehaviour
 		}
 
 		if (flushRequested) {
-			Flush();
+			Flush ();
 		}
 	}
 
@@ -180,11 +186,6 @@ public class Tracker : MonoBehaviour
 			this.traceFormatter = traceFormatter;
 		}
 
-		public ITraceFormatter GetTraceFormatter ()
-		{
-			return traceFormatter;
-		}
-
 		public void Result (string data)
 		{
 			if (tracker.debug) {
@@ -194,7 +195,7 @@ public class Tracker : MonoBehaviour
 				JSONNode dict = JSONNode.Parse (data);
 				this.ProcessData (dict);
 			} catch (Exception e) {
-				Debug.LogError(e);
+				Debug.LogError (e);
 			}
 			tracker.SetConnected (true);
 		}
@@ -242,6 +243,8 @@ public class Tracker : MonoBehaviour
 	/// <param name="trace">A comma separated string with the values of the trace</param>
 	public void Trace (string trace)
 	{
+
+		trace = Math.Round (System.DateTime.Now.ToUniversalTime ().Subtract (START_DATE).TotalMilliseconds) + "," + trace;
 		if (debug) {
 			Debug.Log ("'" + trace + "' added to the queue.");
 		}
@@ -297,6 +300,27 @@ public class Tracker : MonoBehaviour
 	public void Var (string varName, System.Object value)
 	{
 		Trace ("var", varName, value.ToString ());
+	}
+
+	/// <summary>
+	/// Logs that the user clicked with the mouse/touched a particular target (e.g. an enemy, an ally, a button of the HUD, etc.).
+	/// </summary>
+	/// <param name="x">Horizontal coordinate of the mouse or touch event, in the game's coordinate system</param>
+	/// <param name="y">Vertical coordinate of the mouse or touch event, in the game's coordinate system</param>
+	/// <param name="target">Id of the element that was hit by the click.</param>
+	public void Click (float x, float y, string target)
+	{
+		Trace ("click", x.ToString (), y.ToString (), target);
+	}
+
+	/// <summary>
+	/// Logs that the user clicked with the mouse/tocuhed a particular point in the game scene. If an identified element is at that point, use <see cref="Tracker.Click(float,float,string)"/>
+	/// </summary>
+	/// <param name="x">Horizontal coordinate of the mouse or touch event, in the game's coordinate system</param>
+	/// <param name="y">Vertical coordinate of the mouse or touch event, in the game's coordinate system</param>
+	public void Click (float x, float y)
+	{
+		Trace ("click", x.ToString (), y.ToString ());
 	}
 }
 

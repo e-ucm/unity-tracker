@@ -19,9 +19,9 @@ public class SimpleJsonFormat : Tracker.ITraceFormatter
 		String result = "[";	
 		foreach (String trace in traces){
 			string[] parts = trace.Split(',');
-			result += "{\"event\":\"" + parts[0] + "\", " +
-				"\"target\":\"" + parts[1] + "\"" +
-				( parts.Length == 3 ? ",\"value\":\"" + parts[2] + "\"" : "")
+			result += "{\"event\":\"" + parts[1] + "\", " +
+				"\"target\":\"" + parts[2] + "\"" +
+				( parts.Length == 4 ? ",\"value\":\"" + parts[3] + "\"" : "")
 				+ "},";
 		}
 		return result.Substring(0, result.Length - 1) + "]";
