@@ -79,6 +79,11 @@ public class Tracker : MonoBehaviour
 			break;
 		default:
 			String path = Application.persistentDataPath;
+#if UNITY_ANDROID
+			AndroidJavaObject env = new AndroidJavaObject("android.os.Environment");
+			AndroidJavaObject file = env.CallStatic<AndroidJavaObject>("getExternalStorageDirectory");
+			path = file.Call<String>("getAbsolutePath");
+#endif
 			if (!path.EndsWith ("/")) {
 				path += "/";
 			}
