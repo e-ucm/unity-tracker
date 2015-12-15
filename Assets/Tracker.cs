@@ -77,21 +77,11 @@ public class Tracker : MonoBehaviour
 		case "net":
 			storage = new NetStorage (this, host, trackingCode);
 			break;
+		case "semi":
+			storage = new SemiStorage(this, GeneratePath(), host, trackingCode);
+			break;
 		default:
-			String path = Application.persistentDataPath;
-#if UNITY_ANDROID
-			AndroidJavaObject env = new AndroidJavaObject("android.os.Environment");
-			AndroidJavaObject file = env.CallStatic<AndroidJavaObject>("getExternalStorageDirectory");
-			path = file.Call<String>("getAbsolutePath");
-#endif
-			if (!path.EndsWith ("/")) {
-				path += "/";
-			}
-			path += "traces";
-			if (debug) {
-				Debug.Log ("Storing traces in " + path);
-			}
-			storage = new LocalStorage (path);
+			storage = new LocalStorage (GeneratePath());
 			break;
 		}
 		storage.SetTracker (this);
@@ -100,6 +90,25 @@ public class Tracker : MonoBehaviour
 		this.nextFlush = flushInterval;
 
 		UnityEngine.Object.DontDestroyOnLoad (this);
+	}
+	
+	public string GeneratePath ()
+	{
+		String path = Application.persistentDataPath;
+#if UNITY_ANDROID
+		AndroidJavaObject env = new AndroidJavaObject("android.os.Environment");
+		AndroidJavaObject file = env.CallStatic<AndroidJavaObject>("getExternalStorageDirectory");
+		path = file.Call<String>("getAbsolutePath");
+#endif
+		if (!path.EndsWith ("/")) {
+			path += "/";
+		}
+		path += "traces";
+		if (debug) {
+			Debug.Log ("Storing traces in " + path);
+		}
+		
+		return path;
 	}
 
 	public void Update ()
@@ -146,7 +155,7 @@ public class Tracker : MonoBehaviour
 				Debug.Log ("Not connected. Trying to connect");
 			}
 			Connect ();
-		} else if (queue.Count > 0 && !sending) {
+		} else if (queue.Count > 0 && !sending || traceFormat == "semi") {
 			if (debug) {
 				Debug.Log ("Flushing...");
 			}

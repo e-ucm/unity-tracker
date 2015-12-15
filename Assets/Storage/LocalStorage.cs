@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Collections.Generic;
 
 public class LocalStorage : Storage
 {
@@ -23,8 +24,9 @@ public class LocalStorage : Storage
 		Write ("session," + now + "\n", startListener);
 	}
 
-	public void Send (String data, Net.IRequestListener flushListener)
+	public void Send (List<string> sent, Tracker.ITraceFormatter traceFormatter, Net.IRequestListener flushListener)
 	{
+		string data = traceFormatter.Serialize(sent);
 		Write (data, flushListener);
 	}
 
