@@ -75,8 +75,9 @@ public class NetStorage : Storage
 		net.POST (host + start + trackingCode, null, headers, netStartListener);
 	}
 
-	public void Send (String data, Net.IRequestListener flushListener)
+	public void Send(List<string> sent, Tracker.ITraceFormatter traceFormatter, Net.IRequestListener flushListener)
 	{
+		string data = traceFormatter.Serialize(sent);
 		net.POST (host + track, System.Text.Encoding.UTF8.GetBytes (data), trackHeaders, flushListener);
 	}
 

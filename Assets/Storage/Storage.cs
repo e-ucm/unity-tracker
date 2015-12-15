@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 public interface Storage
 {
@@ -12,6 +13,6 @@ public interface Storage
 	///<summary>
 	/// The tracker wants to send the given data
 	///</summary>
-	void Send (String data, Net.IRequestListener flushListener);
+	void Send (List<string> sent, Tracker.ITraceFormatter formatter, Net.IRequestListener flushListener);
 
 }
