@@ -82,8 +82,8 @@ public class NetStorage : Storage
 
 	private void SetAuthToken (string authToken)
 	{
-		trackHeaders.Add ("Authorization", authToken);
-	}
+		trackHeaders["Authorization"] = authToken;
+    }
 
 	public class NetStartListener : Tracker.StartListener
 	{
@@ -99,6 +99,16 @@ public class NetStorage : Storage
 			storage.SetAuthToken (dict ["authToken"]);
 			base.ProcessData (dict);
 		}
+	}
+
+	public bool IsAvailable()
+	{
+		if (Application.internetReachability == NetworkReachability.ReachableViaCarrierDataNetwork ||
+			Application.internetReachability == NetworkReachability.ReachableViaLocalAreaNetwork)
+		{
+			return true;
+		}
+		return false;
 	}
 }
 
