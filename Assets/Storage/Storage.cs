@@ -14,4 +14,5 @@ public interface Storage
 	///</summary>
 	void Send (String data, Net.IRequestListener flushListener);
 
+	bool IsAvailable();
 }
