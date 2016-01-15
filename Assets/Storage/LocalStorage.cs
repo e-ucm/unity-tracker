@@ -55,11 +55,11 @@ public class LocalStorage : Storage
 #endif
 	}
 
-	public void RemoveBackupFile ()
+	public void CleanFile ()
 	{
 		if (File.Exists (tracesFile))
 		{
-			File.Delete (tracesFile);
+			File.WriteAllText (tracesFile, "");
 		}
 	}
 
@@ -67,15 +67,18 @@ public class LocalStorage : Storage
 	{
 		List<String> tracesList = new List<String>();
 #if UNITY_ANDROID || UNITY_IPHONE || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_STANDALONE_LINUX
-		string file = tracesFile;
-		string data = File.ReadAllText (file);
-		String[] traces = data.Split (new Char[] { ';', '\n' }, StringSplitOptions.RemoveEmptyEntries);
-
-		foreach (String s in traces)
+		if (File.Exists(tracesFile))
 		{
-			if (!String.IsNullOrEmpty (s) && s.Substring (0, Separator.Length) != Separator)
+			string file = tracesFile;
+			string data = File.ReadAllText(file);
+			String[] traces = data.Split(new Char[] { ';', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+
+			foreach (String s in traces)
 			{
-				tracesList.Add (s);
+				if (!String.IsNullOrEmpty(s) && s.Substring(0, Separator.Length) != Separator)
+				{
+					tracesList.Add(s);
+				}
 			}
 		}
 #endif
