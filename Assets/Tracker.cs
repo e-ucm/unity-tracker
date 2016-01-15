@@ -212,6 +212,7 @@ public class Tracker : MonoBehaviour
 				if (debug) {
 					Debug.Log ("Sending traces via main storage");
 				}
+				allTraces.Clear();
 				allTraces.AddRange (sent);
 				if(backupStorage!=null)
 					allTraces.AddRange (backupStorage.RecoverData ());
@@ -241,6 +242,9 @@ public class Tracker : MonoBehaviour
 				Debug.Log ("Traces received by storage.");
 			}
 			sent.Clear ();
+			if (useMainStorage) {
+				backupStorage.CleanFile();
+			}
 		} else {
 			if (debug) {
 				Debug.LogError ("Traces dispatch failed");
