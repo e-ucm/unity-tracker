@@ -104,7 +104,7 @@ public class XApiFormat : Tracker.ITraceFormatter
 		} else {
 			id = ev;
 		}
-		return JSONNode.Parse ("{ id : " + objectId + id + "/" + parts [1] + "}");
+		return JSONNode.Parse ("{ id : " + objectId + id + "/" + parts [2] + "}");
 	}
 }
 
