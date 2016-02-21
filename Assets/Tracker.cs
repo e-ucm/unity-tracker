@@ -157,7 +157,7 @@ public class Tracker : MonoBehaviour
 			}
 		}
 
-		if (flushRequested) {
+		if (connected && flushRequested) {
 			Flush ();
 		}
 	}
@@ -203,7 +203,7 @@ public class Tracker : MonoBehaviour
 			queue.Clear ();
 			flushRequested = false;
 			string data = "";
-			if (useMainStorage == false) {
+			if (useMainStorage == false && backupStorage != null) {
 				if (debug) {
 					Debug.Log ("Sending traces via aux storage");
 				}
@@ -242,16 +242,16 @@ public class Tracker : MonoBehaviour
 				Debug.Log ("Traces received by storage.");
 			}
 			sent.Clear ();
-			if (useMainStorage) {
+			if (useMainStorage && backupStorage != null) {
 				backupStorage.CleanFile();
 			}
 		} else {
 			if (debug) {
 				Debug.LogError ("Traces dispatch failed");
 			}
-			if (useMainStorage) {
+			if (useMainStorage && backupStorage != null) {
 				useMainStorage = false;
-				mainStorage.Send (GetRawTraces(), flushListener);
+				backupStorage.Send (GetRawTraces(), flushListener);
 			}
 		}
 		sending = false;
