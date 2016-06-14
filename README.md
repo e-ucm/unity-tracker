@@ -33,11 +33,17 @@ public class TraceGeneratorsScript : MonoBehaviour {
 ## Detailed Feature List
 1. Configurable flush intervals (via `T().SetFlushInterval()`; use `-1` to entirely avoid auto-flush). If flushing fails, for example due to transient network problems, the tracker will periodically attempt to re-send the data. 
 1. Different storage types: 
-	1. `net`: sends data to a trace-server, such as the [rage-analytics Backend](https://github.com/e-ucm/rage-analytics-backend). If set, a hostname should be specified via the `host` property.
+	1. `net`: sends data to a trace-server, such as the [rage-analytics Backend](https://github.com/e-ucm/rage-analytics-backend). If set, a hostname should be specified via the `host` property and.
 	2. `local`, to store them locally for later retrieval. Un-sent traces are always persisted locally before being sent through the net, to support intermittent internet access.
 1. Different trace formats:
 	2. `csv`: allow processing in MS Excel or other spreadsheets. Also supported by many analytics environments.
 	3. `json`: especially intended for programmatic analysis, for instance using python or java/javascript or
-	4. `xapi`: an upcoming standard for student activity
+	4. `xapi`: an upcoming standard for student activity. Note that, if the tracker's storage type is `net` it is required to use the `xapi` trace format since the [rage-analytics Backend](https://github.com/e-ucm/rage-analytics-backend) expects xAPI Statements. The [xAPI tracking model] (https://github.com/e-ucm/xapi-seriousgames/blob/master/Tracking%20Model.md) that the backend expects is composed of [Completables](https://github.com/e-ucm/xapi-seriousgames/blob/master/Tracking%20Model.md#1341-completable), [Reachables](https://github.com/e-ucm/xapi-seriousgames/blob/master/Tracking%20Model.md#1341-reachable), [Variables](https://github.com/e-ucm/xapi-seriousgames/blob/master/Tracking%20Model.md#1342-variables) and [Alternatives](https://github.com/e-ucm/xapi-seriousgames/blob/master/Tracking%20Model.md#1343-alternatives). 
 1. Tracker messages can be displayed in the Unity console by setting the `Debug` property
 1. Uses Unity's in-built facilities to handle connections, files and timing.
+ 
+### Tracker and Collector Flow
+If the storage type is `net`, the tracker will try to connect to a `Collector` [endpoint](https://github.com/e-ucm/rage-analytics-backend/wiki/Collector), exposed by the [rage-analytics Backend](https://github.com/e-ucm/rage-analytics-backend). 
+
+More information about the tracker can be found in the [official documentation of rage-analytics] (https://github.com/e-ucm/rage-analytics/wiki/Tracker).
+
