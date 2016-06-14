@@ -29,3 +29,15 @@ public class TraceGeneratorsScript : MonoBehaviour {
 	}
 }
 ```
+
+## Detailed Feature List
+1. Configurable flush intervals (via `T().SetFlushInterval()`; use `-1` to entirely avoid auto-flush). If flushing fails, for example due to transient network problems, the tracker will periodically attempt to re-send the data. 
+1. Different storage types: 
+	1. `net`: sends data to a trace-server, such as the [rage-analytics Backend](https://github.com/e-ucm/rage-analytics-backend). If set, a hostname should be specified via the `host` property.
+	2. `local`, to store them locally for later retrieval. Un-sent traces are always persisted locally before being sent through the net, to support intermittent internet access.
+1. Different trace formats:
+	2. `csv`: allow processing in MS Excel or other spreadsheets. Also supported by many analytics environments.
+	3. `json`: especially intended for programmatic analysis, for instance using python or java/javascript or
+	4. `xapi`: an upcoming standard for student activity
+1. Tracker messages can be displayed in the Unity console by setting the `Debug` property
+1. Uses Unity's in-built facilities to handle connections, files and timing.
