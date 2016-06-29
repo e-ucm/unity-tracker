@@ -1,4 +1,9 @@
 # Unity tracker
+
+This code belongs to [RAGE project](http://rageproject.eu/) and sends analytics information to a server; or, if the server is currently unavailable, stores them locally until it becomes available again.
+
+After a game is developed, a common need is to know how the players play, what interactions they follow within the game and how much time they spend in a game session; collectively, these are known as game analytics. Analytics are used to locate gameplay bottlenecks and assess  game effectiveness and learning outcomes, among other tasks.
+
 ## Installation
 1. Clone the repository in your **Assets** folder
 1. Add the [Tracker MonoBehaviour](https://github.com/e-ucm/unity-tracker/blob/master/Assets/Tracker.cs) to an empty in your first scene (the component will be kept across scenes)
