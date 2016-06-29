@@ -50,7 +50,7 @@ public class TraceGeneratorsScript : MonoBehaviour {
  
 ### User Guide
 
-The tracker requires (if `net` mode is on) the [RAGE Analytics](https://github.com/e-ucm/rage-analytics) infrastructure up and running. Check out the [Quickstart guide](https://github.com/e-ucm/rage-analytics/wiki/Quickstart) and follow the `developer` and `teacher` steps in order to create a game and set-up a class. It also requires a:
+The tracker requires (if `net` mode is on) the [RAGE Analytics](https://github.com/e-ucm/rage-analytics) infrastructure up and running. Check out the [Quickstart guide](https://github.com/e-ucm/rage-analytics/wiki/Quickstart) and follow the `developer` and `teacher` steps in order to create a game and [setup a class](https://github.com/e-ucm/rage-analytics/wiki/Set-up-a-class). It also requires a:
 
 * **Host**: where the server is at. This value usually looks like <rage_server_hostmane>/api/proxy/gleaner/collector. The [collector](https://github.com/e-ucm/rage-analytics-backend/wiki/Collector) is an endpoint designed to retrieve traces and send them to the analysis pipeline.
 * **Tracking code**: an unique tracking code identifying the game. [This code is created in the frontend](https://github.com/e-ucm/rage-analytics/wiki/Tracking-code), when creating a new game.
