@@ -28,8 +28,8 @@ public class TraceGeneratorsScript : MonoBehaviour {
 
 	void Start () {
 		Tracker tracker = Tracker.T();
-		tracker.Screen ("start");
-		tracker.Var ("score", 0);
+		Tracker.T.accessible.Accessed("Scene1");
+		Tracker.T.setScore(0);
 	}
 
 	void Update () {	
