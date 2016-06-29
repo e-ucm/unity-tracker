@@ -49,6 +49,34 @@ public class TraceGeneratorsScript : MonoBehaviour {
 1. Tracker messages can be displayed in the Unity console by setting the `Debug` property
 1. Uses Unity's in-built facilities to handle connections, files and timing.
  
+### User Guide
+
+The tracker requires (if `net` mode is on) the [RAGE Analytics](https://github.com/e-ucm/rage-analytics) infrastructure up and running. It also requires a:
+
+* **Host**: where the server is at. This value usually looks like <rage_server_hostmane>/api/proxy/gleaner/collector. The [collector](https://github.com/e-ucm/rage-analytics-backend/wiki/Collector) is an endpoint designed to retrieve traces and send them to the analysis pipeline.
+* **Tracking code**: an unique tracking code identifying the game. [This code is created in the frontend](https://github.com/e-ucm/rage-analytics/wiki/Tracking-code), when creating a new game.
+
+
+The tracker exposes an API designed to collect, analyze and visualize the data. The  API consists on defining a set of **game objects**. A game object represents an element of the game on which players can perform one or several types of interactions. Some examples of player's interactions are:
+
+* start or complete (interaction) a level (game object)
+* increase or decrease (interaction) the number of coins (game object)
+* select or unlock (interaction) a power-up (game object)
+
+A **gameplay** is the flow of interactions that a player performs over these game objects in a sequential order.
+
+The main typed of game objects supported are:
+
+* [Completable](https://github.com/e-ucm/unity-tracker/blob/master/Assets/Format/CompletableTracker.cs)
+* [Accessible](https://github.com/e-ucm/unity-tracker/blob/master/Assets/Format/AccessibleTracker.cs)
+* [Alternative](https://github.com/e-ucm/unity-tracker/blob/master/Assets/Format/AlternativeTracker.cs)
+* [TrackedGameObject](https://github.com/e-ucm/unity-tracker/blob/master/Assets/Format/GameObjectTracker.cs).
+ 
+
+Usage example:
+
+
+
 ### Tracker and Collector Flow
 If the storage type is `net`, the tracker will try to connect to a `Collector` [endpoint](https://github.com/e-ucm/rage-analytics-backend/wiki/Collector), exposed by the [rage-analytics Backend](https://github.com/e-ucm/rage-analytics-backend). 
 
