@@ -27,7 +27,6 @@ using System.Collections;
 public class TraceGeneratorsScript : MonoBehaviour {
 
 	void Start () {
-		Tracker tracker = Tracker.T();
 		Tracker.T.accessible.Accessed("Scene1");
 		Tracker.T.setScore(0);
 	}
@@ -73,8 +72,26 @@ The main typed of game objects supported are:
 * [TrackedGameObject](https://github.com/e-ucm/unity-tracker/blob/master/Assets/Format/GameObjectTracker.cs).
  
 
-Usage example:
+Usage example for the tracking of an in-game quest. We decided to use a [Completable](https://github.com/e-ucm/unity-tracker/blob/master/Assets/Format/CompletableTracker.cs) game object for this use-case as the most suitable option. Note that in order to track other type of user interactions it is required to perform a previous analysis to identify the most suitable game objects ([Completable](https://github.com/e-ucm/unity-tracker/blob/master/Assets/Format/CompletableTracker.cs), [Accessible](https://github.com/e-ucm/unity-tracker/blob/master/Assets/Format/AccessibleTracker.cs), [Alternative](https://github.com/e-ucm/unity-tracker/blob/master/Assets/Format/AlternativeTracker.cs), [TrackedGameObject](https://github.com/e-ucm/unity-tracker/blob/master/Assets/Format/GameObjectTracker.cs)) for the given case. For instance, in order to track conversations [Alternative](https://github.com/e-ucm/unity-tracker/blob/master/Assets/Format/AlternativeTracker.cs) is the best choice:
 
+```c#
+
+	// Completable
+	// Initialized
+	Tracker.T.completable.Initialized("MyGameQuestId", Completable.Quest);
+	
+	//...
+	
+	// Progressed
+	Tracker.T.completable.Progressed("MyGameQuestId", Completable.Quest, 0.8);
+	
+	//...
+	
+	// Progressed
+	bool success = true;
+	Tracker.T.completable.Completed("MyGameQuestId", Completed, success);
+
+```
 
 
 ### Tracker and Collector Flow
