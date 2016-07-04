@@ -71,6 +71,8 @@ The main typed of game objects supported are:
 * [Alternative](https://github.com/e-ucm/unity-tracker/blob/master/Assets/Format/AlternativeTracker.cs) - for Question, Menu, Dialog, Path, Arena or any other generic Alternative. Methods: `Selected` and `Unlocked`.
 * [TrackedGameObject](https://github.com/e-ucm/unity-tracker/blob/master/Assets/Format/GameObjectTracker.cs) for Enemy, Npc, Item or any other generic GameObject. Methods: `Interacted` and `Used`.
 
+##### Completable
+
 Usage example for the tracking of an in-game quest. We decided to use a [Completable](https://github.com/e-ucm/unity-tracker/blob/master/Assets/Format/CompletableTracker.cs) game object for this use-case as the most suitable option:
 
 ```c#
@@ -92,6 +94,61 @@ Usage example for the tracking of an in-game quest. We decided to use a [Complet
 
 ```
 
+##### Accessible
+
+Usage example for the tracking the player's movement through some in-game screens and skipping the `Intro` cutscene:
+
+```c#
+	
+	// Accessible
+	// The player accessed the 'MainMenu' screen
+	Tracker.T.accessible.Accessed("MainMenu", Accessible.Screen);
+	
+	//...
+	
+	// The player skipped a cutscene
+	Tracker.T.accessible.Skipped("Intro", Accessible.Cutscene);
+
+```
+
+##### Alternative
+
+Usage example for the tracking the player's choices during a conversation:
+
+```c#
+	
+	// Alternative
+	// The player selected the 'Dan' answer for the question 'What's his name?'
+	Tracker.T.alternative.Accessed("What's his name?", "Dan", Alternative.Question);
+	
+	//...
+	
+	// The player selected 'OK' for the question 'Do you want it?'
+	Tracker.T.alternative.Accessed("Do you want it?", "OK", Alternative.Question);
+
+	//...
+	
+	// The player unlocked 'Combat Mode' for the menu 'Menues/Start'
+	Tracker.T.alternative.Unlocked("Menues/Start", "Combat Mode", Alternative.Menu);
+	
+```
+
+##### Tracked Game Object
+
+Usage example for the tracking the player's with a NPC villager and using a health potion (item):
+
+```c#
+	
+	// Tracked Game Object
+	// The player interacted with a Non Playable Character
+	Tracker.T.trackedGameObject.Interacted("NPC/Villager", TrackedGameObject.Npc);
+	
+	//...
+	
+	// The player used a health potion
+	Tracker.T.trackedGameObject.Used("Item/HealthPotion", TrackedGameObject.Item);
+	
+```
 
 Note that in order to track other type of user interactions it is required to perform a previous analysis to identify the most suitable game objects ([Completable](https://github.com/e-ucm/unity-tracker/blob/master/Assets/Format/CompletableTracker.cs), [Accessible](https://github.com/e-ucm/unity-tracker/blob/master/Assets/Format/AccessibleTracker.cs), [Alternative](https://github.com/e-ucm/unity-tracker/blob/master/Assets/Format/AlternativeTracker.cs), [TrackedGameObject](https://github.com/e-ucm/unity-tracker/blob/master/Assets/Format/GameObjectTracker.cs)) for the given case. For instance, in order to track conversations [Alternative](https://github.com/e-ucm/unity-tracker/blob/master/Assets/Format/AlternativeTracker.cs) is the best choice
 
