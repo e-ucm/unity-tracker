@@ -18,6 +18,8 @@ After a game is developed, a common need is to know how the players play, what i
   1. **Debug**: Enable to see tracker messages in the Unity console.
 1. Send traces
 
+The traces file are saved in `C:\Users\UserName\AppData\LocalLow\DefaultCompany\GameName`
+
 ## MonoBehaviour Example
 
 ```c#
