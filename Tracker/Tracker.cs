@@ -284,7 +284,7 @@ public class Tracker : MonoBehaviour
 				Debug.Log ("Traces received by storage.");
 			}
 			sent.Clear ();
-			if (useMainStorage) {
+			if (useMainStorage && backupStorage != null) {
 				backupStorage.CleanFile();
 			}
 		} else {
