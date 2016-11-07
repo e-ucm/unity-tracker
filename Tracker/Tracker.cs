@@ -537,7 +537,10 @@ public class Tracker : MonoBehaviour
 
     public void setExtension(string key, System.Object value)
     {
-        extensions.Add(key, value);
+        if (extensions.ContainsKey(key))
+            extensions[key] = value;
+        else
+            extensions.Add(key, value);
     }
 }
 
