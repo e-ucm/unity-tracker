@@ -74,13 +74,15 @@ public class LocalStorage : Storage
 
 	public void CleanFile ()
 	{
+#if !(UNITY_WEBPLAYER || UNITY_WEBGL)
 		if (File.Exists (tracesFile))
 		{
 			File.WriteAllText (tracesFile, "");
 		}
-	}
+#endif
+    }
 
-	public List<string> RecoverData ()
+    public List<string> RecoverData ()
 	{
 		List<String> tracesList = new List<String>();
 #if UNITY_ANDROID || UNITY_IPHONE || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_STANDALONE_LINUX
