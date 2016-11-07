@@ -54,7 +54,7 @@ public class TraceGeneratorsScript : MonoBehaviour {
 
 The tracker requires (if `net` mode is on) the [RAGE Analytics](https://github.com/e-ucm/rage-analytics) infrastructure up and running. Check out the [Quickstart guide](https://github.com/e-ucm/rage-analytics/wiki/Quickstart) and follow the `developer` and `teacher` steps in order to create a game and [setup a class](https://github.com/e-ucm/rage-analytics/wiki/Set-up-a-class). It also requires a:
 
-* **Host**: where the server is at. This value usually looks like <rage_server_hostmane>/api/proxy/gleaner/collector. The [collector](https://github.com/e-ucm/rage-analytics-backend/wiki/Collector) is an endpoint designed to retrieve traces and send them to the analysis pipeline.
+* **Host**: where the server is at. This value usually looks like `<rage_server_hostmane>/api/proxy/gleaner/collector/`. The [collector](https://github.com/e-ucm/rage-analytics/wiki/Back-end-collector) is an endpoint designed to retrieve traces and send them to the analysis pipeline.
 * **Tracking code**: an unique tracking code identifying the game. [This code is created in the frontend](https://github.com/e-ucm/rage-analytics/wiki/Tracking-code), when creating a new game.
 
 
@@ -155,7 +155,7 @@ Usage example for the tracking the player's with a NPC villager and using a heal
 Note that in order to track other type of user interactions it is required to perform a previous analysis to identify the most suitable game objects ([Completable](https://github.com/e-ucm/unity-tracker/blob/master/Assets/Format/CompletableTracker.cs), [Accessible](https://github.com/e-ucm/unity-tracker/blob/master/Assets/Format/AccessibleTracker.cs), [Alternative](https://github.com/e-ucm/unity-tracker/blob/master/Assets/Format/AlternativeTracker.cs), [TrackedGameObject](https://github.com/e-ucm/unity-tracker/blob/master/Assets/Format/GameObjectTracker.cs)) for the given case. For instance, in order to track conversations [Alternative](https://github.com/e-ucm/unity-tracker/blob/master/Assets/Format/AlternativeTracker.cs) is the best choice
 
 ### Tracker and Collector Flow
-If the storage type is `net`, the tracker will try to connect to a `Collector` [endpoint](https://github.com/e-ucm/rage-analytics-backend/wiki/Collector), exposed by the [rage-analytics Backend](https://github.com/e-ucm/rage-analytics-backend). 
+If the storage type is `net`, the tracker will try to connect to a `Collector` [endpoint](https://github.com/e-ucm/rage-analytics/wiki/Back-end-collector), exposed by the [rage-analytics Backend](https://github.com/e-ucm/rage-analytics-backend). 
 
 More information about the tracker can be found in the [official documentation of rage-analytics] (https://github.com/e-ucm/rage-analytics/wiki/Tracker).
 
