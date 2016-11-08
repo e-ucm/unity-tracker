@@ -37,6 +37,19 @@ public class AlternativeTracker : Tracker.IGameObjectTracker
 
     /// <summary>
     /// Player selected an option in a presented alternative
+    /// Type = Alternative
+    /// </summary>
+    /// <param name="alternativeId">Alternative identifier.</param>
+    /// <param name="optionId">Option identifier.</param>
+    public void Selected(string alternativeId, string optionId, bool correct)
+    {
+        tracker.setResponse(optionId);
+        tracker.setSuccess(correct);
+        tracker.Trace(Tracker.Verb.Selected.ToString().ToLower(), Alternative.Alternative.ToString().ToLower(), alternativeId);
+    }
+
+    /// <summary>
+    /// Player selected an option in a presented alternative
     /// </summary>
     /// <param name="alternativeId">Alternative identifier.</param>
     /// <param name="optionId">Option identifier.</param>
@@ -44,6 +57,19 @@ public class AlternativeTracker : Tracker.IGameObjectTracker
     public void Selected(string alternativeId, string optionId, Alternative type)
     {
         tracker.setResponse(optionId);
+        tracker.Trace(Tracker.Verb.Selected.ToString().ToLower(), type.ToString().ToLower(), alternativeId);
+    }
+
+    /// <summary>
+    /// Player selected an option in a presented alternative
+    /// </summary>
+    /// <param name="alternativeId">Alternative identifier.</param>
+    /// <param name="optionId">Option identifier.</param>
+    /// <param name="type">Alternative type.</param>
+    public void Selected(string alternativeId, string optionId, bool correct, Alternative type)
+    {
+        tracker.setResponse(optionId);
+        tracker.setSuccess(correct);
         tracker.Trace(Tracker.Verb.Selected.ToString().ToLower(), type.ToString().ToLower(), alternativeId);
     }
 

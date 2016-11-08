@@ -156,12 +156,12 @@ public class Tracker : MonoBehaviour
 	public string GeneratePath ()
 	{
 		String path = Application.persistentDataPath;
-#if UNITY_ANDROID
+#if UNITY_ANDROID && !UNITY_EDITOR
 		AndroidJavaObject env = new AndroidJavaObject ("android.os.Environment");
 		AndroidJavaObject file = env.CallStatic<AndroidJavaObject> ("getExternalStorageDirectory");
 		path = file.Call<String> ("getAbsolutePath");
 #endif
-		if (!path.EndsWith ("/")) {
+        if (!path.EndsWith ("/")) {
 			path += "/";
 		}
 		path += "traces";
@@ -284,7 +284,7 @@ public class Tracker : MonoBehaviour
 				Debug.Log ("Traces received by storage.");
 			}
 			sent.Clear ();
-			if (useMainStorage) {
+			if (useMainStorage && backupStorage != null) {
 				backupStorage.CleanFile();
 			}
 		} else {
@@ -537,7 +537,10 @@ public class Tracker : MonoBehaviour
 
     public void setExtension(string key, System.Object value)
     {
-        extensions.Add(key, value);
+        if (extensions.ContainsKey(key))
+            extensions[key] = value;
+        else
+            extensions.Add(key, value);
     }
 }
 

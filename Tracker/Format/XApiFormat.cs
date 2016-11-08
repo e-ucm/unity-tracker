@@ -130,7 +130,7 @@ public void StartData (JSONNode data)
             {
                 // Extensions come in <key, value> pairs
 
-                JSONNode extensions = JSONNode.Parse("{}");
+                JSONClass extensions = new JSONClass();
                 JSONNode extensionsChild = null;
 
                 for (int i = 4; i < parts.Length; i+= 2)
@@ -144,27 +144,27 @@ public void StartData (JSONNode data)
                     if (key.Equals(Tracker.Extension.Score.ToString().ToLower()))
                     {
 
-                        JSONNode score = JSONNode.Parse("{\"raw\":}");
+                        JSONClass score = new JSONClass();
                         float valueResult = 0f;
                         float.TryParse(value, out valueResult);
-                        score["raw"] = new JSONData(valueResult);
+                        score.Add("raw", new JSONData(valueResult));
                         extensions.Add("score", score);
                     }
                     else if (key.Equals(Tracker.Extension.Success.ToString().ToLower()))
                     {
                         bool valueResult = false;
                         bool.TryParse(value, out valueResult);
-                        extensions["success"] = new JSONData(valueResult);
+                        extensions.Add("success", new JSONData(valueResult));
                     }
                     else if (key.Equals(Tracker.Extension.Completion.ToString().ToLower()))
                     {
                         bool valueResult = false;
                         bool.TryParse(value, out valueResult);
-                        extensions["completion"] = new JSONData(valueResult);                        
+                        extensions.Add("completion", new JSONData(valueResult));
                     }
                     else if (key.Equals(Tracker.Extension.Response.ToString().ToLower()))
                     {
-                        extensions["response"] = value;
+                        extensions.Add("response", new JSONData(value));
                     }
                     else
                     {
@@ -175,9 +175,24 @@ public void StartData (JSONNode data)
                         }
 
                         string id = key;
-                        extensionIds.TryGetValue(key, out id);
+                        bool tbool;
+                        int tint;
+                        float tfloat;
+                        double tdouble;
 
-                        extensionsChild.Add(id, JSONNode.Parse(value));
+                        if (extensionIds.ContainsKey(key))
+                            id = extensionIds[key];
+
+                        if (int.TryParse(value, out tint))
+                            extensionsChild.Add(id, new JSONData(tint));
+                        else if(float.TryParse(value, out tfloat))
+                            extensionsChild.Add(id, new JSONData(tfloat));
+                        else if(double.TryParse(value, out tdouble))
+                            extensionsChild.Add(id, new JSONData(tdouble));
+                        else if(bool.TryParse(value, out tbool))
+                            extensionsChild.Add(id, new JSONData(tbool));
+                        else
+                            extensionsChild.Add(id, new JSONData(value));
                     }
                 }
                 statement.Add("result", extensions);
