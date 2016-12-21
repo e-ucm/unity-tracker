@@ -18,6 +18,11 @@ After a game is developed, a common need is to know how the players play, what i
   1. **Debug**: Enable to see tracker messages in the Unity console.
 1. Send traces
 
+The configuration process is very simple. If a game is exported, a track.txt file has to be created in the root project directory, into an Asset folder.
+
+The [track.txt](https://github.com/e-ucm/QuizDemo/blob/master/Assets/Assets/track.txt) file must be edited changing the `host` and `trackingCode` 
+with the correct values. Normaly the `host` looks like this `http://localhost:3000/api/proxy/gleaner/collector/` and the `trackingCode` normally looks like [this](https://github.com/e-ucm/rage-analytics/wiki/Tracking-code).
+
 The traces file are saved in `C:\Users\UserName\AppData\LocalLow\DefaultCompany\GameName`
 
 ## MonoBehaviour Example
