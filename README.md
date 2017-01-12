@@ -7,8 +7,9 @@ This code belongs to [RAGE project](http://rageproject.eu/) and sends analytics 
 After a game is developed, a common need is to know how the players play, what interactions they follow within the game and how much time they spend in a game session; collectively, these are known as game analytics. Analytics are used to locate gameplay bottlenecks and assess  game effectiveness and learning outcomes, among other tasks.
 
 ## Installation
-1. Clone the repository in your **Assets** folder
-1. Add the [Tracker MonoBehaviour](https://github.com/e-ucm/unity-tracker/blob/master/Assets/Tracker.cs) to an empty in your first scene (the component will be kept across scenes)
+1. Clone the repository in your **Assets** folder inside your Unity project
+1. Add the [Tracker MonoBehaviour](https://github.com/e-ucm/unity-tracker/blob/master/Assets/Tracker.cs) into an empty object in your first scene (the component will be kept across scenes)
+	![unitytracker add tracker](https://cloud.githubusercontent.com/assets/5657407/21893124/07974d46-d8da-11e6-9168-e1cb0e7547f1.png)
 1. Configure the component parameters
   1. **Flush interval**: time between each flush of the tracker to the server. If this is set to `-1`, it will be necessary to call `T().RequestFlush()` to send traces to the server.
   1. **Storage type**: can be `net`, to send traces to a server, o `local`, to store them locally.
@@ -23,7 +24,12 @@ The configuration process is very simple. If a game is exported, a track.txt fil
 The [track.txt](https://github.com/e-ucm/QuizDemo/blob/master/Assets/Assets/track.txt) file must be edited changing the `host` and `trackingCode` 
 with the correct values. Normaly the `host` looks like this `http://localhost:3000/api/proxy/gleaner/collector/` and the `trackingCode` normally looks like [this](https://github.com/e-ucm/rage-analytics/wiki/Tracking-code).
 
-The traces file are saved in `C:\Users\UserName\AppData\LocalLow\DefaultCompany\GameName`
+<b>Note</b>: The traces file are saved in `C:/Users/[username]/AppData/LocalLow/[Company Name]/[Product Name]` under the name `traces.csv`
+
+If you are not sure or you don’t know your company and product name, you can check and change it the path using the Unity menu:
+`Edit > Project Settings > Player`
+![inspector unity](https://cloud.githubusercontent.com/assets/5657407/21893123/07972abe-d8da-11e6-8f79-94903f62dced.png)
+
 
 ## MonoBehaviour Example
 
