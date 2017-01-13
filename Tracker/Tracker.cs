@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using SimpleJSON;
 using System;
+using System.IO;
 
 public class Tracker : MonoBehaviour
 {
@@ -41,6 +42,10 @@ public class Tracker : MonoBehaviour
 
     private Storage mainStorage;
 	private LocalStorage backupStorage;
+
+	public bool rawCopy;
+	private string rawFilePath;
+
 	private ITraceFormatter traceFormatter;
 	private bool sending;
 	private bool connected;
@@ -132,6 +137,8 @@ public class Tracker : MonoBehaviour
 			break;
 		}
 		filePath = GeneratePath ();
+		rawFilePath = filePath + "Raw.csv";
+
 		switch (storageType) {
 		case "net":
 			filePath += "Pending";
@@ -226,6 +233,10 @@ public class Tracker : MonoBehaviour
 			if (backupStorage != null) {
 				backupStorage.Start (startLocalStorageListener);
 			}
+			if (rawCopy)
+			{
+				WriteRawCopy(true);
+			}
 		}
 	}
 	
@@ -267,12 +278,17 @@ public class Tracker : MonoBehaviour
 		}
 	}
 
-	private string GetRawTraces ()
+	private string GetRawTraces()
+	{
+		return GetRawTraces("");
+	}
+
+	private string GetRawTraces (string separator)
 	{
 		string data = "";
 		foreach (String trace in sent)
 		{
-			data += trace + ";";
+			data += trace + ";" + separator;
 		}
 		return data;
 	}
@@ -282,6 +298,10 @@ public class Tracker : MonoBehaviour
 		if (!error) {
 			if (debug) {
 				Debug.Log ("Traces received by storage.");
+			}
+			if (rawCopy)
+			{
+				WriteRawCopy(false);
 			}
 			sent.Clear ();
 			if (useMainStorage && backupStorage != null) {
@@ -297,6 +317,33 @@ public class Tracker : MonoBehaviour
 			}
 		}
 		sending = false;
+	}
+
+	private void WriteRawCopy(bool newSession)
+	{
+		string data = "";
+		if (newSession)
+		{
+			string now = System.DateTime.Now.ToString().Replace('/', '_').Replace(':', '_');
+			data = "\n" + "--session--," + now + "\n";
+		}
+		else
+		{
+			data = GetRawTraces("\n");
+		}
+
+#if UNITY_WEBGL
+		requestListener.Error ("Impossible to use LocalStorage in WebGL version");
+#elif UNITY_ANDROID || UNITY_IPHONE || UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_STANDALONE_LINUX
+		try
+		{
+			File.AppendAllText(rawFilePath, data);
+		}
+		catch (Exception e)
+		{
+			Debug.Log("Error writting raw copy");
+		}
+#endif
 	}
 
 	public class StartLocalStorageListener : Net.IRequestListener
