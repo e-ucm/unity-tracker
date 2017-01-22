@@ -132,12 +132,12 @@ Usage example for the tracking the player's choices during a conversation:
 	
 	// Alternative
 	// The player selected the 'Dan' answer for the question 'What's his name?'
-	Tracker.T.alternative.Accessed("What's his name?", "Dan", Alternative.Question);
+	Tracker.T.alternative.Selected("What's his name?", "Dan", Alternative.Question);
 	
 	//...
 	
 	// The player selected 'OK' for the question 'Do you want it?'
-	Tracker.T.alternative.Accessed("Do you want it?", "OK", Alternative.Question);
+	Tracker.T.alternative.Selected("Do you want to start right now?", "OK", Alternative.Question);
 
 	//...
 	
