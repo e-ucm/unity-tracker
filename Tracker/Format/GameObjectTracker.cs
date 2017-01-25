@@ -29,7 +29,7 @@ public class GameObjectTracker : Tracker.IGameObjectTracker
     /// <param name="gameobjectId">Reachable identifier.</param>
     public void Interacted(string gameobjectId)
     {
-        tracker.Trace(Tracker.Verb.Interacted.ToString().ToLower(), TrackedGameObject.GameObject.ToString().ToLower(), gameobjectId);
+		tracker.ActionTrace(Tracker.Verb.Interacted.ToString().ToLower(), TrackedGameObject.GameObject.ToString().ToLower(), gameobjectId);
     }
 
     /// <summary>
@@ -38,7 +38,7 @@ public class GameObjectTracker : Tracker.IGameObjectTracker
     /// <param name="gameobjectId">TrackedGameObject identifier.</param>
     public void Interacted(string gameobjectId, TrackedGameObject type)
     {
-        tracker.Trace(Tracker.Verb.Interacted.ToString().ToLower(), type.ToString().ToLower(), gameobjectId);
+		tracker.ActionTrace(Tracker.Verb.Interacted.ToString().ToLower(), type.ToString().ToLower(), gameobjectId);
     }
 
     /// <summary>
@@ -48,7 +48,7 @@ public class GameObjectTracker : Tracker.IGameObjectTracker
     /// <param name="gameobjectId">Reachable identifier.</param>
     public void Used(string gameobjectId)
     {
-        tracker.Trace(Tracker.Verb.Used.ToString().ToLower(), TrackedGameObject.GameObject.ToString().ToLower(), gameobjectId);
+		tracker.ActionTrace(Tracker.Verb.Used.ToString().ToLower(), TrackedGameObject.GameObject.ToString().ToLower(), gameobjectId);
     }
 
     /// <summary>
@@ -57,6 +57,6 @@ public class GameObjectTracker : Tracker.IGameObjectTracker
     /// <param name="gameobjectId">TrackedGameObject identifier.</param>
     public void Used(string gameobjectId, TrackedGameObject type)
     {
-        tracker.Trace(Tracker.Verb.Used.ToString().ToLower(), type.ToString().ToLower(), gameobjectId);
+		tracker.ActionTrace(Tracker.Verb.Used.ToString().ToLower(), type.ToString().ToLower(), gameobjectId);
     }
 }

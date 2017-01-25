@@ -32,7 +32,7 @@ public class AlternativeTracker : Tracker.IGameObjectTracker
     public void Selected(string alternativeId, string optionId)
     {
         tracker.setResponse(optionId);
-        tracker.Trace(Tracker.Verb.Selected.ToString().ToLower(), Alternative.Alternative.ToString().ToLower(), alternativeId);
+        tracker.ActionTrace(Tracker.Verb.Selected.ToString().ToLower(), Alternative.Alternative.ToString().ToLower(), alternativeId);
     }
 
     /// <summary>
@@ -45,7 +45,7 @@ public class AlternativeTracker : Tracker.IGameObjectTracker
     {
         tracker.setResponse(optionId);
         tracker.setSuccess(correct);
-        tracker.Trace(Tracker.Verb.Selected.ToString().ToLower(), Alternative.Alternative.ToString().ToLower(), alternativeId);
+		tracker.ActionTrace(Tracker.Verb.Selected.ToString().ToLower(), Alternative.Alternative.ToString().ToLower(), alternativeId);
     }
 
     /// <summary>
@@ -57,7 +57,7 @@ public class AlternativeTracker : Tracker.IGameObjectTracker
     public void Selected(string alternativeId, string optionId, Alternative type)
     {
         tracker.setResponse(optionId);
-        tracker.Trace(Tracker.Verb.Selected.ToString().ToLower(), type.ToString().ToLower(), alternativeId);
+		tracker.ActionTrace(Tracker.Verb.Selected.ToString().ToLower(), type.ToString().ToLower(), alternativeId);
     }
 
     /// <summary>
@@ -70,7 +70,7 @@ public class AlternativeTracker : Tracker.IGameObjectTracker
     {
         tracker.setResponse(optionId);
         tracker.setSuccess(correct);
-        tracker.Trace(Tracker.Verb.Selected.ToString().ToLower(), type.ToString().ToLower(), alternativeId);
+		tracker.ActionTrace(Tracker.Verb.Selected.ToString().ToLower(), type.ToString().ToLower(), alternativeId);
     }
 
     /// <summary>
@@ -82,7 +82,7 @@ public class AlternativeTracker : Tracker.IGameObjectTracker
     public void Unlocked(string alternativeId, string optionId)
     {
         tracker.setResponse(optionId);
-        tracker.Trace(Tracker.Verb.Unlocked.ToString().ToLower(), Alternative.Alternative.ToString().ToLower(), alternativeId);
+		tracker.ActionTrace(Tracker.Verb.Unlocked.ToString().ToLower(), Alternative.Alternative.ToString().ToLower(), alternativeId);
     }
 
     /// <summary>
@@ -94,7 +94,7 @@ public class AlternativeTracker : Tracker.IGameObjectTracker
     public void Unlocked(string alternativeId, string optionId, Alternative type)
     {
         tracker.setResponse(optionId);
-        tracker.Trace(Tracker.Verb.Unlocked.ToString().ToLower(), type.ToString().ToLower(), alternativeId);
+		tracker.ActionTrace(Tracker.Verb.Unlocked.ToString().ToLower(), type.ToString().ToLower(), alternativeId);
     }
 
 }

@@ -32,7 +32,7 @@ public class CompletableTracker : Tracker.IGameObjectTracker
     /// <param name="completableId">Completable identifier.</param>
     public void Initialized(string completableId)
     {
-        tracker.Trace(Tracker.Verb.Initialized.ToString().ToLower(), Completable.Completable.ToString().ToLower(), completableId);
+		tracker.ActionTrace(Tracker.Verb.Initialized.ToString().ToLower(), Completable.Completable.ToString().ToLower(), completableId);
     }
 
     /// <summary>
@@ -42,7 +42,7 @@ public class CompletableTracker : Tracker.IGameObjectTracker
     /// <param name="type">Completable type.</param>
     public void Initialized(string completableId, Completable type)
     {
-        tracker.Trace(Tracker.Verb.Initialized.ToString().ToLower(), type.ToString().ToLower(), completableId);
+		tracker.ActionTrace(Tracker.Verb.Initialized.ToString().ToLower(), type.ToString().ToLower(), completableId);
     }
 
     /// <summary>
@@ -54,7 +54,7 @@ public class CompletableTracker : Tracker.IGameObjectTracker
     public void Progressed(string completableId, float value)
     {
         tracker.setProgress(value);
-        tracker.Trace(Tracker.Verb.Progressed.ToString().ToLower(), Completable.Completable.ToString().ToLower(), completableId);
+		tracker.ActionTrace(Tracker.Verb.Progressed.ToString().ToLower(), Completable.Completable.ToString().ToLower(), completableId);
     }
 
     /// <summary>
@@ -66,7 +66,7 @@ public class CompletableTracker : Tracker.IGameObjectTracker
     public void Progressed(string completableId, Completable type, float value)
     {
         tracker.setProgress(value);
-        tracker.Trace(Tracker.Verb.Progressed.ToString().ToLower(), type.ToString().ToLower(), completableId);
+		tracker.ActionTrace(Tracker.Verb.Progressed.ToString().ToLower(), type.ToString().ToLower(), completableId);
     }
 
     /// <summary>
@@ -80,7 +80,7 @@ public class CompletableTracker : Tracker.IGameObjectTracker
     {
         tracker.setSuccess(true);
         tracker.setScore(1f);
-        tracker.Trace(Tracker.Verb.Completed.ToString().ToLower(), Completable.Completable.ToString().ToLower(), completableId);
+		tracker.ActionTrace(Tracker.Verb.Completed.ToString().ToLower(), Completable.Completable.ToString().ToLower(), completableId);
     }
 
     /// <summary>
@@ -94,7 +94,7 @@ public class CompletableTracker : Tracker.IGameObjectTracker
     {
         tracker.setSuccess(true);
         tracker.setScore(1f);
-        tracker.Trace(Tracker.Verb.Completed.ToString().ToLower(), type.ToString().ToLower(), completableId);
+		tracker.ActionTrace(Tracker.Verb.Completed.ToString().ToLower(), type.ToString().ToLower(), completableId);
     }
 
     /// <summary>
@@ -108,7 +108,7 @@ public class CompletableTracker : Tracker.IGameObjectTracker
     {
         tracker.setSuccess(success);
         tracker.setScore(1f);
-        tracker.Trace(Tracker.Verb.Completed.ToString().ToLower(), type.ToString().ToLower(), completableId);
+		tracker.ActionTrace(Tracker.Verb.Completed.ToString().ToLower(), type.ToString().ToLower(), completableId);
     }
 
     /// <summary>
@@ -122,7 +122,7 @@ public class CompletableTracker : Tracker.IGameObjectTracker
     {
         tracker.setSuccess(success);
         tracker.setScore(score);
-        tracker.Trace(Tracker.Verb.Completed.ToString().ToLower(), type.ToString().ToLower(), completableId);
+		tracker.ActionTrace(Tracker.Verb.Completed.ToString().ToLower(), type.ToString().ToLower(), completableId);
     }
 
 }

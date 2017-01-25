@@ -447,33 +447,38 @@ public class Tracker : MonoBehaviour
 	/// Adds a trace to the queue.
 	/// </summary>
 	/// <param name="trace">A comma separated string with the values of the trace</param>
+	[Obsolete("Use ActionTrace instead. Never intended to be public. Has to receive a csv with a specific format.")]
 	public void Trace (string trace)
 	{
+		EnqueueTrace (trace);
+	}
 
+	private void EnqueueTrace(string trace){
 		trace = Math.Round (System.DateTime.Now.ToUniversalTime ().Subtract (START_DATE).TotalMilliseconds) + "," + trace;
 		if (debug) {
 			Debug.Log ("'" + trace + "' added to the queue.");
 		}
-        if(extensions.Count > 0)
-        {
-            string extContent = "";
-            foreach (KeyValuePair<string, System.Object> e in extensions)
-            {
-                string key = e.Key.ToString();
-                if (key.Equals(""))
-                {
-                    continue;
-                }
-                string value = e.Value.ToString();
-                if (value.Equals(""))
-                {
-                    continue;
-                }
-                extContent = extContent + ("," + key + "," + value);
-            }
-            trace = trace + "," + extContent;
-            extensions.Clear();
-        }
+		if(extensions.Count > 0)
+		{
+			string extContent = "";
+			foreach (KeyValuePair<string, System.Object> e in extensions)
+			{
+				string key = e.Key.ToString();
+				if (key.Equals(""))
+				{
+					continue;
+				}
+				string value = e.Value.ToString();
+				if (value.Equals(""))
+				{
+					continue;
+				}
+				extContent = extContent + ("," + key.Replace(",","/,") + "," + value.Replace(",","/,"));
+			}
+			trace = trace + extContent;
+			extensions.Clear();
+		}
+
 		queue.Add (trace);
 	}
 
@@ -481,13 +486,30 @@ public class Tracker : MonoBehaviour
 	/// Adds a trace with the specified values
 	/// </summary>
 	/// <param name="values">Values of the trace.</param>
+	[Obsolete("Use ActionTrace instead. Never intended to be public. Has to receive values in specific order.")]
 	public void Trace (params string[] values)
 	{
+		EnqueueTrace (values);
+	}
+
+	private void EnqueueTrace(params string[] values){
 		string result = "";
 		foreach (string value in values) {
-			result += value + ",";
+			result += value.Replace(",","/,") + ",";
 		}
-		Trace (result);
+
+		result = result.Substring (0, result.Length - 1);
+
+		EnqueueTrace (result);
+	}
+
+	/// <summary>
+	/// Adds a trace with verb, target and targeit
+	/// </summary>
+	/// <param name="values">Values of the trace.</param>
+	public void ActionTrace (string verb, string target_type, string target_id)
+	{
+		EnqueueTrace (verb,target_type,target_id);
 	}
 
     public enum Verb

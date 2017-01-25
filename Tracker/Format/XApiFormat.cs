@@ -126,7 +126,30 @@ public class XApiFormat : Tracker.ITraceFormatter
 
     private JSONNode CreateStatement(string trace)
     {
-        string[] parts = trace.Split(',');
+		List<string> p = new List<string> ();
+
+		bool escape = false;
+		int start = 0;
+		for (int i = 0; i < trace.Length; i++) {
+			switch (trace [i]) {
+			case '/':
+				escape = true;
+				break;
+			case ',':
+				if (!escape) {
+					p.Add (trace.Substring (start, i-start).Replace("/,",","));
+					start = i + 1;
+				} else
+					escape = false;
+				break;
+			default: break;
+			}
+		}
+		p.Add(trace.Substring(start).Replace("/,",","));
+
+
+
+		string[] parts = p.ToArray ();
         string timestamp = new System.DateTime(1970, 1, 1, 0, 0, 0, System.DateTimeKind.Utc).AddMilliseconds(long.Parse(parts[0])).ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
 
         JSONNode statement = JSONNode.Parse("{\"timestamp\": \"" + timestamp + "\"}");

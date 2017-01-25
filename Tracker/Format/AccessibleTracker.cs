@@ -30,7 +30,7 @@ public class AccessibleTracker : Tracker.IGameObjectTracker
     /// <param name="reachableId">Reachable identifier.</param>
     public void Accessed(string reachableId)
     {
-        tracker.Trace(Tracker.Verb.Accessed.ToString().ToLower(), Accessible.Accessible.ToString().ToLower(), reachableId);
+		tracker.ActionTrace(Tracker.Verb.Accessed.ToString().ToLower(), Accessible.Accessible.ToString().ToLower(), reachableId);
     }
 
     /// <summary>
@@ -40,7 +40,7 @@ public class AccessibleTracker : Tracker.IGameObjectTracker
     /// <param name="type">Reachable type.</param>
     public void Accessed(string reachableId, Accessible type)
     {
-        tracker.Trace(Tracker.Verb.Accessed.ToString().ToLower(), type.ToString().ToLower(), reachableId);
+		tracker.ActionTrace(Tracker.Verb.Accessed.ToString().ToLower(), type.ToString().ToLower(), reachableId);
     }
 
     /// <summary>
@@ -50,7 +50,7 @@ public class AccessibleTracker : Tracker.IGameObjectTracker
     /// <param name="reachableId">Reachable identifier.</param>
     public void Skipped(string reachableId)
     {
-        tracker.Trace(Tracker.Verb.Skipped.ToString().ToLower(), Accessible.Accessible.ToString().ToLower(), reachableId);
+		tracker.ActionTrace(Tracker.Verb.Skipped.ToString().ToLower(), Accessible.Accessible.ToString().ToLower(), reachableId);
     }
 
     /// <summary>
@@ -60,7 +60,7 @@ public class AccessibleTracker : Tracker.IGameObjectTracker
     /// <param name="type">Reachable type.</param>
     public void Skipped(string reachableId, Accessible type)
     {
-        tracker.Trace(Tracker.Verb.Skipped.ToString().ToLower(), type.ToString().ToLower(), reachableId);
+		tracker.ActionTrace(Tracker.Verb.Skipped.ToString().ToLower(), type.ToString().ToLower(), reachableId);
     }
 
 
