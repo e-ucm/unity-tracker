@@ -228,7 +228,13 @@ public class XApiFormat : Tracker.ITraceFormatter
         verbIds.TryGetValue(ev, out id);
 
         JSONNode verb = JSONNode.Parse("{id: }");
-        verb["id"] = id;
+
+		if (id != null)
+			verb ["id"] = id;
+		else {
+			Debug.LogWarning ("xAPI: Unknown definition for verb: " + ev);
+			verb ["id"] = ev;
+		}
 
         return verb;
     }
@@ -236,8 +242,8 @@ public class XApiFormat : Tracker.ITraceFormatter
     private JSONNode CreateObject(string[] parts)
     {
         string type = parts[2];
-
         string id = parts[3];
+
         string typeKey = type;
         objectIds.TryGetValue(type, out typeKey);
 
@@ -245,7 +251,12 @@ public class XApiFormat : Tracker.ITraceFormatter
         obj["id"] = objectId + id;
 
         JSONNode definition = JSONNode.Parse("{type: }");
-        definition["type"] = typeKey;
+		if (typeKey != null)
+			definition ["type"] = typeKey;
+		else {
+			Debug.LogWarning ("xAPI: Unknown definition for target type: " + type);
+			definition ["type"] = type;
+		}
 
         obj.Add("definition", definition);
 
