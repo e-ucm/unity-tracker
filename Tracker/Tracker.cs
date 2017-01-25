@@ -602,15 +602,41 @@ public class Tracker : MonoBehaviour
     public void setVar(string id, string value)
     {
         setExtension(id, value);
-    }    
+    }
+
+	public void setExtension(string key, float value){
+		setExtension (key, value.ToString ("G", System.Globalization.CultureInfo.InvariantCulture));
+	}
+
+	public void setExtension(string key, double value){
+		setExtension (key, value.ToString ("G", System.Globalization.CultureInfo.InvariantCulture));
+	}
 
     public void setExtension(string key, System.Object value)
     {
+		if (key == null || key == "")
+			throw(new ExtensionException ("Extension key is null or empty. Ignored extension.",ExtensionException.ExtensionExceptionType.KEY));
+		if (value == null)
+			throw(new ExtensionException ("Extension value is null. Ignored extension.",ExtensionException.ExtensionExceptionType.VALUE));
+
         if (extensions.ContainsKey(key))
             extensions[key] = value;
         else
             extensions.Add(key, value);
     }
+
+	public class ExtensionException : Exception{
+		public enum ExtensionExceptionType { KEY, VALUE };
+
+		public ExtensionExceptionType Type {
+			get;
+			private set;
+		}
+
+		public ExtensionException(string message, ExtensionExceptionType Type) : base(message){
+			this.Type = Type;
+		}
+	}
 }
 
 

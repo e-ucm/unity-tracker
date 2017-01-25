@@ -172,7 +172,8 @@ namespace SimpleJSON
             get
             {
                 float v = 0.0f;
-                if (float.TryParse(Value, out v))
+
+				if (float.TryParse(Value,System.Globalization.NumberStyles.AllowDecimalPoint, System.Globalization.CultureInfo.InvariantCulture, out v))
                     return v;
                 return 0.0f;
             }
@@ -188,7 +189,7 @@ namespace SimpleJSON
             get
             {
                 double v = 0.0;
-                if (double.TryParse(Value, out v))
+				if (double.TryParse(Value,System.Globalization.NumberStyles.AllowDecimalPoint, System.Globalization.CultureInfo.InvariantCulture, out v))
                     return v;
                 return 0.0;
             }
@@ -314,7 +315,6 @@ namespace SimpleJSON
             int integer = 0;
             double real = 0;
 
-            token = token.Replace(".", ",");
 
             if (int.TryParse(token, out integer))
             {
