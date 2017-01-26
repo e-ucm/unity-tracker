@@ -52,7 +52,7 @@ public class Tracker : MonoBehaviour
 	private bool connecting;
 	private bool flushRequested;
 	private bool useMainStorage;
-	private List<string> queue = new List<string> ();
+	protected List<string> queue = new List<string> ();
 	private List<string> sent = new List<string> ();
 	private List<string> allTraces = new List<string>();
 	private float nextFlush;
@@ -341,7 +341,7 @@ public class Tracker : MonoBehaviour
 		}
 		catch (Exception e)
 		{
-			Debug.Log("Error writting raw copy");
+			Debug.Log("Error writting raw copy. Exception: " + e);
 		}
 #endif
 	}

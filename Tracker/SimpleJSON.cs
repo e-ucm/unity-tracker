@@ -422,8 +422,7 @@ namespace SimpleJSON
                         stack.Pop();
                         if (Token.Length > 0)
                         {
-                            string tmpName = TokenName.ToString().Trim();
-                            AddElement(ctx, Token.ToString(), TokenName.ToString(), TokenIsString);
+                            AddElement(ctx, Token.ToString(), TokenName.ToString().Trim(), TokenIsString);
                             TokenIsString = false;
                         }
                         TokenName.Length = 0;
