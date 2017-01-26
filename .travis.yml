@@ -1,0 +1,44 @@
+os:
+  - linux
+language: csharp
+mono:
+  - 4.2.3
+sudo: required
+install:
+  - nuget install NUnit.Runners -Version 2.6.4 -OutputDirectory testrunner
+  - nuget install coveralls.net -Version 0.6.0 -OutputDirectory testrunner
+  - sudo apt-get install gtk-sharp2
+  # install mono cecil
+  - curl -sS https://api.nuget.org/packages/mono.cecil.0.9.5.4.nupkg > /tmp/mono.cecil.0.9.5.4.nupkg.zip
+  - unzip /tmp/mono.cecil.0.9.5.4.nupkg.zip -d /tmp/cecil
+  - cp /tmp/cecil/lib/net40/Mono.Cecil.dll .
+  - cp /tmp/cecil/lib/net40/Mono.Cecil.dll /tmp/cecil/
+  # install monocov
+  - git clone --depth=50 git://github.com/csMACnz/monocov.git ../../csMACnz/monocov
+  - cd ../../csMACnz/monocov
+  - cp /tmp/cecil/Mono.Cecil.dll .
+  - ./configure
+  - make
+  - sudo make install
+  # return to source directory
+  - cd ../../e-ucm/unity-tracker
+script:
+  # include installed libs
+  - export LD_LIBRARY_PATH=/usr/local/lib
+  # compile dll's
+  - xbuild /p:Configuration=Release ./Tests/tracker.sln
+  - xbuild /p:Configuration=Release ./Tests/TestProject/unity-tracker-test.sln
+  # copy debug information
+  - cp ./Tests/Temp/bin/Debug/Assembly-CSharp-firstpass.dll.mdb ./Tests/TestProject/bin/Release/
+  - cp ./Tests/Temp/bin/Release/Assembly-CSharp.dll.mdb ./Tests/TestProject/bin/Release/
+  # create coverage file
+  - mono --profile=monocov:outfile=monocovCoverage.cov,+Assembly-CSharp-firstpass ./testrunner/NUnit.Runners.2.6.4/tools/nunit-console.exe ./Tests/TestProject/bin/Release/test.dll
+  - monocov --export-xml=monocovCoverage monocovCoverage.cov
+  # remove code than not in unittests
+  - rm ./monocovCoverage/*Atom.xml
+  - rm ./monocovCoverage/*Request.xml 
+after_success:
+  - REPO_COMMIT_AUTHOR=$(git show -s --pretty=format:"%cn")
+  - REPO_COMMIT_AUTHOR_EMAIL=$(git show -s --pretty=format:"%ce")
+  - REPO_COMMIT_MESSAGE=$(git show -s --pretty=format:"%s")
+#  - mono ./testrunner/coveralls.net.0.6.0/tools/csmacnz.Coveralls.exe --monocov -i ./monocovCoverage --repoToken "bIBwmmSHpfkqtrJmE9a369DHCk9pUKyBu" --commitId $TRAVIS_COMMIT --commitBranch "$TRAVIS_BRANCH" --commitAuthor "$REPO_COMMIT_AUTHOR" --commitEmail "$REPO_COMMIT_AUTHOR_EMAIL" --commitMessage "$REPO_COMMIT_MESSAGE" --jobId $TRAVIS_JOB_ID --serviceName "travis-ci" --useRelativePaths

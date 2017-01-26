@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!--This file represents the results of running a test suite-->
+<test-results name="D:\rage\unity-tracker\Tests\TestProject\bin\Debug\test.dll" total="1" errors="1" failures="0" not-run="0" inconclusive="0" ignored="0" skipped="0" invalid="0" date="2017-01-26" time="19:53:53">
+  <environment nunit-version="2.6.4.14350" clr-version="2.0.50727.8745" os-version="Microsoft Windows NT 6.2.9200.0" platform="Win32NT" cwd="D:\rage\unity-tracker\Tests\TestProject" machine-name="DESKTOP-4UVBQDE" user="dan" user-domain="DESKTOP-4UVBQDE" />
+  <culture-info current-culture="es-ES" current-uiculture="en-GB" />
+  <test-suite type="Assembly" name="D:\rage\unity-tracker\Tests\TestProject\bin\Debug\test.dll" executed="True" result="Failure" success="False" time="0.029" asserts="0">
+    <results>
+      <test-suite type="Namespace" name="NUnit" executed="True" result="Failure" success="False" time="0.023" asserts="0">
+        <results>
+          <test-suite type="Namespace" name="Test" executed="True" result="Failure" success="False" time="0.023" asserts="0">
+            <results>
+              <test-suite type="TestFixture" name="TrackerTest" executed="True" result="Failure" success="False" time="0.022" asserts="0">
+                <results>
+                  <test-case name="NUnit.Test.TrackerTest.EditorTest" executed="True" result="Error" success="False" time="0.017" asserts="0">
+                    <failure>
+                      <message><![CDATA[System.Security.SecurityException : ECall methods must be packaged into a system module.]]></message>
+                      <stack-trace><![CDATA[at Tracker..ctor()
+at NUnit.Test.TrackerOpened..ctor()
+at NUnit.Test.TrackerTest.EditorTest() in D:\rage\unity-tracker\Tests\TrackerTest.cs:line 24
+]]></stack-trace>
+                    </failure>
+                  </test-case>
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+    </results>
+  </test-suite>
+</test-results>

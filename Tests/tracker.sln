@@ -1,0 +1,61 @@
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2008
+
+Project("{585D2ED8-8BB8-6853-14EE-E9422A469BDA}") = "tracker", "Assembly-CSharp-firstpass.csproj", "{177B8EC3-B55E-8607-6C25-1A4F07A77490}"
+EndProject
+Project("{585D2ED8-8BB8-6853-14EE-E9422A469BDA}") = "tracker", "Assembly-CSharp.csproj", "{9AC2E002-BCE4-9FFA-296F-AC32F6EFDC3D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{177B8EC3-B55E-8607-6C25-1A4F07A77490}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{177B8EC3-B55E-8607-6C25-1A4F07A77490}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{177B8EC3-B55E-8607-6C25-1A4F07A77490}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{177B8EC3-B55E-8607-6C25-1A4F07A77490}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9AC2E002-BCE4-9FFA-296F-AC32F6EFDC3D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9AC2E002-BCE4-9FFA-296F-AC32F6EFDC3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9AC2E002-BCE4-9FFA-296F-AC32F6EFDC3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9AC2E002-BCE4-9FFA-296F-AC32F6EFDC3D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		Policies = $0
+		$0.DotNetNamingPolicy = $1
+		$1.DirectoryNamespaceAssociation = None
+		$1.ResourceNamePolicy = FileFormatDefault
+		$0.TextStylePolicy = $2
+		$2.FileWidth = 120
+		$2.inheritsSet = VisualStudio
+		$2.inheritsScope = text/plain
+		$2.scope = text/x-csharp
+		$0.CSharpFormattingPolicy = $3
+		$3.IndentSwitchBody = True
+		$3.NamespaceBraceStyle = EndOfLine
+		$3.ClassBraceStyle = EndOfLine
+		$3.InterfaceBraceStyle = EndOfLine
+		$3.StructBraceStyle = EndOfLine
+		$3.EnumBraceStyle = EndOfLine
+		$3.MethodBraceStyle = EndOfLine
+		$3.ConstructorBraceStyle = EndOfLine
+		$3.DestructorBraceStyle = EndOfLine
+		$3.BeforeMethodDeclarationParentheses = False
+		$3.BeforeMethodCallParentheses = False
+		$3.BeforeConstructorDeclarationParentheses = False
+		$3.BeforeIndexerDeclarationBracket = False
+		$3.BeforeDelegateDeclarationParentheses = False
+		$3.AfterDelegateDeclarationParameterComma = True
+		$3.NewParentheses = False
+		$3.SpacesBeforeBrackets = False
+		$3.MethodCallArgumentWrapping = WrapIfTooLong
+		$3.MethodDeclarationParameterWrapping = WrapIfTooLong
+		$3.IndexerDeclarationParameterWrapping = WrapIfTooLong
+		$3.inheritsSet = Mono
+		$3.inheritsScope = text/x-csharp
+		$3.scope = text/x-csharp
+	EndGlobalSection
+EndGlobal
