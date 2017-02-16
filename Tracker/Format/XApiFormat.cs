@@ -119,6 +119,7 @@ namespace RAGE.Analytics.Formats
                     Debug.LogError("------ TRACE: -------");
                     Debug.LogError("Original: " + traces[i]);
                     Debug.LogError("SimpleJSON: " + statement);
+                    Debug.LogError("Exception:");
                     Debug.LogError(ex.ToString());
                 }
                 i++;
@@ -190,9 +191,17 @@ namespace RAGE.Analytics.Formats
 
                             JSONClass score = new JSONClass();
                             float valueResult = 0f;
-                            float.TryParse(value, out valueResult);
-                            score.Add("raw", new JSONData(valueResult));
-                            extensions.Add("score", score);
+
+                            if (!float.TryParse (value, System.Globalization.NumberStyles.AllowDecimalPoint, System.Globalization.CultureInfo.InvariantCulture, out valueResult)) {
+                                if (Tracker.T.strictMode) {
+                                    throw(new XApiException ("Tracker-xAPI: Score isn't a number.", XApiException.XApiExceptionType.EXTENSION));
+                                } else {
+                                    Debug.LogWarning ("Tracker-xAPI: Score isn't a number, ignoring.");
+                                }
+                            } else {
+                                score.Add ("raw", new JSONData (valueResult));
+                                extensions.Add ("score", score);
+                            }
                         }
                         else if (key.Equals(Tracker.Extension.Success.ToString().ToLower()))
                         {
@@ -227,16 +236,18 @@ namespace RAGE.Analytics.Formats
                             if (extensionIds.ContainsKey(key))
                                 id = extensionIds[key];
 
-                            if (int.TryParse(value, out tint))
-                                extensionsChild.Add(id, new JSONData(tint));
-                            else if (float.TryParse(value, out tfloat))
-                                extensionsChild.Add(id, new JSONData(tfloat));
-                            else if (double.TryParse(value, out tdouble))
-                                extensionsChild.Add(id, new JSONData(tdouble));
-                            else if (bool.TryParse(value, out tbool))
-                                extensionsChild.Add(id, new JSONData(tbool));
-                            else
-                                extensionsChild.Add(id, new JSONData(value));
+                            if (int.TryParse (value, System.Globalization.NumberStyles.AllowDecimalPoint, System.Globalization.CultureInfo.InvariantCulture, out tint))
+                                extensionsChild.Add (id, new JSONData (tint));
+                            else if (float.TryParse (value, System.Globalization.NumberStyles.AllowDecimalPoint, System.Globalization.CultureInfo.InvariantCulture, out tfloat))
+                                extensionsChild.Add (id, new JSONData (tfloat));
+                            else if (double.TryParse (value, System.Globalization.NumberStyles.AllowDecimalPoint, System.Globalization.CultureInfo.InvariantCulture, out tdouble))
+                                extensionsChild.Add (id, new JSONData (tdouble));
+                            else if (bool.TryParse (value, out tbool))
+                                extensionsChild.Add (id, new JSONData (tbool));
+                            else {
+                                
+                                extensionsChild.Add (id, new JSONData (value));
+                            }
                         }
                     }
                     statement.Add("result", extensions);
@@ -257,7 +268,11 @@ namespace RAGE.Analytics.Formats
             if (id != null)
                 verb ["id"] = id;
             else {
-                Debug.LogWarning ("xAPI: Unknown definition for verb: " + ev);
+                if (Tracker.T.strictMode)
+                    throw(new XApiException ("Tracker-xAPI: Unknown definition for verb: " + ev, XApiException.XApiExceptionType.VERB));
+                else
+                    Debug.LogWarning ("Tracker-xAPI: Unknown definition for verb: " + ev);
+                
                 verb ["id"] = ev;
             }
 
@@ -279,13 +294,30 @@ namespace RAGE.Analytics.Formats
             if (typeKey != null)
                 definition ["type"] = typeKey;
             else {
-                Debug.LogWarning ("xAPI: Unknown definition for target type: " + type);
+                if (Tracker.T.strictMode)
+                    throw(new XApiException ("Tracker-xAPI: Unknown definition for target type: " + type, XApiException.XApiExceptionType.TARGET));
+                else
+                    Debug.LogWarning ("Tracker-xAPI: Unknown definition for target type: " + type);
+                
                 definition ["type"] = type;
             }
 
             obj.Add("definition", definition);
 
             return obj;
+        }
+
+        public class XApiException : Exception{
+            public enum XApiExceptionType { VERB, ACTOR, TARGET, EXTENSION };
+
+            public XApiExceptionType Type {
+                get;
+                private set;
+            }
+
+            public XApiException(string message, XApiExceptionType type) : base(message){
+                this.Type = type;
+            }
         }
     }
 }
