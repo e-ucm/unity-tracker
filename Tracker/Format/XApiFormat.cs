@@ -19,6 +19,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using SimpleJSON;
 using System;
+using RAGE.Analytics.Exceptions;
 
 namespace RAGE.Analytics.Formats
 {
@@ -80,6 +81,24 @@ namespace RAGE.Analytics.Formats
             { Tracker.Extension.Progress.ToString().ToLower(), "https://w3id.org/xapi/seriousgames/extensions/progress"}
         };
 
+        public string getVerbId(string key){
+            if (verbIds.ContainsKey (key))
+                return verbIds [key];
+            return null;
+        }
+
+        public string getObjectId(string key){
+            if (objectIds.ContainsKey (key))
+                return objectIds [key];
+            return null;
+        }
+
+        public string getExtensionId(string key){
+            if (extensionIds.ContainsKey (key))
+                return extensionIds [key];
+            return null;
+        }
+
         private List<JSONNode> statements = new List<JSONNode>();
         private string objectId;
         private JSONNode actor;
@@ -135,12 +154,12 @@ namespace RAGE.Analytics.Formats
             int start = 0;
             for (int i = 0; i < trace.Length; i++) {
                 switch (trace [i]) {
-                case '/':
+                case '\\':
                     escape = true;
                     break;
                 case ',':
                     if (!escape) {
-                        p.Add (trace.Substring (start, i-start).Replace("/,",","));
+                        p.Add (trace.Substring (start, i-start).Replace("\\,",","));
                         start = i + 1;
                     } else
                         escape = false;
@@ -148,7 +167,7 @@ namespace RAGE.Analytics.Formats
                 default: break;
                 }
             }
-            p.Add(trace.Substring(start).Replace("/,",","));
+            p.Add(trace.Substring(start).Replace("\\,",","));
 
 
 
@@ -305,19 +324,6 @@ namespace RAGE.Analytics.Formats
             obj.Add("definition", definition);
 
             return obj;
-        }
-
-        public class XApiException : Exception{
-            public enum XApiExceptionType { VERB, ACTOR, TARGET, EXTENSION };
-
-            public XApiExceptionType Type {
-                get;
-                private set;
-            }
-
-            public XApiException(string message, XApiExceptionType type) : base(message){
-                this.Type = type;
-            }
         }
     }
 }
