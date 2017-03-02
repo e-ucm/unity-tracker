@@ -25,6 +25,7 @@ using System;
 using System.IO;
 using RAGE.Analytics.Formats;
 using RAGE.Analytics.Storages;
+using RAGE.Analytics.Exceptions;
 
 namespace RAGE.Analytics
 {
@@ -74,7 +75,15 @@ namespace RAGE.Analytics
 		private StartListener startListener;
 		private FlushListener flushListener;
 		private static Tracker tracker;
-		private String filePath;
+		private static String filePath;
+        public static string FilePath{
+            get {
+                if (filePath == null)
+                    GeneratePath ();
+                
+                return filePath;
+            }
+        }
 		private StartLocalStorageListener startLocalStorageListener;
 		private Dictionary<string, System.Object> extensions = new Dictionary<string, System.Object>();
 
@@ -173,7 +182,7 @@ namespace RAGE.Analytics
         /// Generates the path used for storing the traces in.
         /// </summary>
         /// <returns>The path.</returns>
-		public string GeneratePath ()
+		public static string GeneratePath ()
 		{
 			String path = Application.persistentDataPath;
 	#if UNITY_ANDROID && !UNITY_EDITOR
@@ -185,9 +194,6 @@ namespace RAGE.Analytics
 				path += "/";
 			}
 			path += "traces";
-			if (debug) {
-				Debug.Log ("Storing traces in " + path);
-			}
 
 			return path;
 		}
@@ -460,16 +466,45 @@ namespace RAGE.Analytics
 		/* Traces */
 
 		/// <summary>
-		/// Adds a trace to the queue.
+		/// Adds a full trace to the queue, ignoring current extensions.
 		/// </summary>
 		/// <param name="trace">A comma separated string with the values of the trace</param>
-		[Obsolete("Use ActionTrace instead. Never intended to be public. Has to receive a csv with a specific format.")]
+		[Obsolete("Use ActionTrace instead. Never intended to be public. Has to receive a csv with specific format.")]
 		public void Trace (string trace)
 		{
-            if (strictMode) {
+            /*if (strictMode) {
                 Debug.LogWarning ("Tracker: Trace() method is Obsolete. Ignoring");
                 return;
+            }*/
+
+            if (trace == null || trace == "")
+                throw new TraceException ("Trace is be empty or null");
+
+            List<string> p = new List<string> ();
+
+            bool escape = false;
+            int start = 0;
+            for (int i = 0; i < trace.Length; i++) {
+                switch (trace [i]) {
+                case '\\':
+                    escape = true;
+                    break;
+                case ',':
+                    if (!escape) {
+                        p.Add (trace.Substring (start, i-start).Replace("\\,",","));
+                        start = i + 1;
+                    } else
+                        escape = false;
+                    break;
+                default: break;
+                }
             }
+            p.Add(trace.Substring(start).Replace("\\,",","));
+
+            string[] parts = p.ToArray ();
+
+            if(parts.Length != 3)
+                throw new TraceException ("Trace length must be 3 (verb,target_type,target_id)");
 
 			EnqueueTrace (trace);
 		}
@@ -494,7 +529,7 @@ namespace RAGE.Analytics
 					{
 						continue;
 					}
-					extContent = extContent + ("," + key.Replace(",","/,") + "," + value.Replace(",","/,"));
+					extContent = extContent + ("," + key.Replace(",","\\,") + "," + value.Replace(",","\\,"));
 				}
 				trace = trace + extContent;
 				extensions.Clear();
@@ -510,10 +545,18 @@ namespace RAGE.Analytics
 		[Obsolete("Use ActionTrace instead. Never intended to be public. Has to receive values in specific order.")]
 		public void Trace (params string[] values)
 		{
-            if (strictMode) {
+            /*if (strictMode) {
                 Debug.LogWarning ("Tracker: Trace() method is Obsolete. Ignoring");
                 return;
-            }
+            } else {*/
+                if (values.Length != 3)
+                    throw new TraceException ("Tracker: Trace must have at least 3 arguments: a verb, a target type and a target ID");
+
+                for(int i = 0; i < values.Length; i++) {
+                    if (!check<TraceException> (values [i], "Tracker: Trace param " + i + " is null or empty, ignoring trace.", "Tracker: Trace param " + i + " is null or empty"))
+                        return;
+                }
+            //}
 
 			EnqueueTrace (values);
 		}
@@ -521,7 +564,7 @@ namespace RAGE.Analytics
 		private void EnqueueTrace(params string[] values){
 			string result = "";
 			foreach (string value in values) {
-				result += value.Replace(",","/,") + ",";
+				result += value.Replace(",","\\,") + ",";
 			}
 
 			result = result.Substring (0, result.Length - 1);
@@ -535,34 +578,14 @@ namespace RAGE.Analytics
 		/// <param name="values">Values of the trace.</param>
 		public void ActionTrace (string verb, string target_type, string target_id)
 		{
-            if (verb == null) {
-                if (strictMode)
-                    throw(new TraceException ("Tracker: Trace verb can't be null."));
-                else{
-                    Debug.LogWarning ("Tracker: Trace verb can't be null, ignoring.");
-                    return;
-                }
-            }
+            bool trace = true;
 
-            if (target_type == null) {
-                if (strictMode)
-                    throw(new TraceException ("Tracker: Target type can't be null."));
-                else{
-                    Debug.LogWarning ("Tracker: Target type can't be null, ignoring.");
-                    return;
-                }
-            }
+            trace &= check<TraceException> (verb, "Tracker: Trace verb can't be null, ignoring. ", "Tracker: Trace verb can't be null.");
+            trace &= check<TraceException> (target_type, "Tracker: Trace Target type can't be null, ignoring. ", "Tracker: Trace Target type can't be null.");
+            trace &= check<TraceException> (target_id, "Tracker: Trace Target ID can't be null, ignoring. ", "Tracker: Trace Target ID can't be null.");
 
-            if (target_id == null) {
-                if (strictMode)
-                    throw(new TraceException ("Tracker: Target ID can't be null."));
-                else{
-                    Debug.LogWarning ("Tracker: Target ID can't be null, ignoring.");
-                    return;
-                }
-            }
-
-			EnqueueTrace (verb,target_type,target_id);
+            if(trace)
+			    EnqueueTrace (verb,target_type,target_id);
 		}
 
 		public enum Verb
@@ -622,7 +645,7 @@ namespace RAGE.Analytics
         /// <param name="success">If set to <c>true</c> means it has been a success.</param>
 		public void setSuccess(bool success)
 		{
-			setExtension(Extension.Success.ToString().ToLower(), success);
+            addExtension(Extension.Success.ToString().ToLower(), success.ToString().ToLower());
 		}
 
         /// <summary>
@@ -643,7 +666,7 @@ namespace RAGE.Analytics
         /// <param name="response">Response.</param>
 		public void setResponse(string response)
 		{
-			setExtension(Extension.Response.ToString().ToLower(), response);
+            addExtension(Extension.Response.ToString().ToLower(), response);
 		}
 
         /// <summary>
@@ -652,7 +675,7 @@ namespace RAGE.Analytics
         /// <param name="completion">If set to <c>true</c> the trace action has been completed.</param>
 		public void setCompletion(bool completion)
 		{
-			setExtension(Extension.Completion.ToString().ToLower(), completion);
+            addExtension(Extension.Completion.ToString().ToLower(), completion.ToString().ToLower());
 		}
 
         /// <summary>
@@ -675,17 +698,16 @@ namespace RAGE.Analytics
         /// <param name="z">The z coordinate.</param>
 		public void setPosition(float x, float y, float z)
 		{
-            if (x == null || y == null || z == null) {
+            if (float.IsNaN(x) || float.IsNaN(y) || float.IsNaN(z)) {
                 if (strictMode)
-                    throw(new ExtensionException ("Tracker: x, y or z cant be null.", ExtensionException.ExtensionExceptionType.VALUE));
+                    throw new ValueExtensionException ("Tracker: x, y or z cant be null.");
                 else{
                     Debug.Log ("Tracker: x, y or z cant be null, ignoring.");
                     return;
                 }
             }
 
-			setExtension(Extension.Position.ToString().ToLower(), "{\"x\":" + x + ", \"y\": " + y
-					+ ", \"z\": " + z + "}");
+            addExtension(Extension.Position.ToString().ToLower(), "{\"x\":" + x + ", \"y\": " + y + ", \"z\": " + z + "}");
 		}
 
         /// <summary>
@@ -694,16 +716,8 @@ namespace RAGE.Analytics
         /// <param name="health">Health.</param>
 		public void setHealth(float health)
         {
-            if (health == null) {
-                if (strictMode)
-                    throw(new ExtensionException ("Tracker: Health cant be null.", ExtensionException.ExtensionExceptionType.VALUE));
-                else{
-                    Debug.Log ("Tracker: Health cant be null, ignoring.");
-                    return;
-                }
-            }
-
-			setExtension(Extension.Health.ToString().ToLower(), health);
+            if(check<ValueExtensionException>(health, "Tracker: Health cant be null, ignoring.", "Tracker: Health cant be null."))
+                addExtension(Extension.Health.ToString().ToLower(), health);
 		}
 
         /// <summary>
@@ -713,7 +727,7 @@ namespace RAGE.Analytics
         /// <param name="value">Value.</param>
 		public void setVar(string id, string value)
 		{
-			setExtension(id, value);
+            addExtension(id, value);
 		}
 
         /// <summary>
@@ -721,8 +735,17 @@ namespace RAGE.Analytics
         /// </summary>
         /// <param name="key">Key.</param>
         /// <param name="value">Value.</param>
+        public void setVar(string key, int value){
+            addExtension (key, value.ToString ("G", System.Globalization.CultureInfo.InvariantCulture));
+        }
+
+        /// <summary>
+        /// Adds a variable to the extensions.
+        /// </summary>
+        /// <param name="key">Key.</param>
+        /// <param name="value">Value.</param>
 		public void setVar(string key, float value){
-			setExtension (key, value.ToString ("G", System.Globalization.CultureInfo.InvariantCulture));
+            addExtension (key, value.ToString ("G", System.Globalization.CultureInfo.InvariantCulture));
 		}
 
         /// <summary>
@@ -731,59 +754,72 @@ namespace RAGE.Analytics
         /// <param name="key">Key.</param>
         /// <param name="value">Value.</param>
 		public void setVar(string key, double value){
-			setExtension (key, value.ToString ("G", System.Globalization.CultureInfo.InvariantCulture));
+            addExtension (key, value.ToString ("G", System.Globalization.CultureInfo.InvariantCulture));
 		}
 
 
-        private void setExtension(string key, float value){
-            setExtension (key, value.ToString ("G", System.Globalization.CultureInfo.InvariantCulture));
+        /// <summary>
+        /// Adds a extension to the extension list.
+        /// </summary>
+        /// <param name="key">Key.</param>
+        /// <param name="value">Value.</param>
+        [Obsolete("Use setVar instead. Never intended to be public.")]
+        public void setExtension(string key, float value){
+            addExtension (key, value.ToString ("G", System.Globalization.CultureInfo.InvariantCulture));
         }
 
-        private void setExtension(string key, double value){
-            setExtension (key, value.ToString ("G", System.Globalization.CultureInfo.InvariantCulture));
+        /// <summary>
+        /// Adds a extension to the extension list.
+        /// </summary>
+        /// <param name="key">Key.</param>
+        /// <param name="value">Value.</param>
+        [Obsolete("Use setVar instead. Never intended to be public.")]
+        public void setExtension(string key, double value){
+            addExtension (key, value.ToString ("G", System.Globalization.CultureInfo.InvariantCulture));
         }
 
-		private void setExtension(string key, System.Object value)
+        /// <summary>
+        /// Adds a extension to the extension list.
+        /// </summary>
+        /// <param name="key">Key.</param>
+        /// <param name="value">Value.</param>
+        [Obsolete("Use setVar instead. Never intended to be public.")]
+		public void setExtension(string key, System.Object value)
 		{
-            if (key == null || key == "") {
-                if (strictMode)
-                    throw(new ExtensionException ("Tracker: Extension key is null or empty. Ignored extension.", ExtensionException.ExtensionExceptionType.KEY));
-                else {
-                    Debug.LogWarning ("Tracker: Extension key is null or empty. Ignored extension.");
-                    return;
-                }
-            }
-            if (value == null) {
-                if (strictMode)
-                    throw(new ExtensionException ("Tracker: Extension value is null. Ignored extension.", ExtensionException.ExtensionExceptionType.VALUE));
-                else {
-                    Debug.LogWarning ("Tracker: Extension value is null. Ignored extension.");
-                    return;
-                }
-            }
-
-			if (extensions.ContainsKey(key))
-				extensions[key] = value;
-			else
-				extensions.Add(key, value);
+            addExtension (key, value);
 		}
 
-        public class TraceException : Exception{
-            public TraceException(string message) : base(message){
+        private void addExtension(string key, System.Object value)
+        {
+            if (checkExtension (key, value)) {
+                if (extensions.ContainsKey (key))
+                    extensions [key] = value;
+                else
+                    extensions.Add (key, value);
             }
         }
 
-		public class ExtensionException : Exception{
-			public enum ExtensionExceptionType { KEY, VALUE };
 
-			public ExtensionExceptionType Type {
-				get;
-				private set;
-			}
+        private bool checkExtension(string key, System.Object value){
+            return 
+                check<KeyExtensionException>(key, "Tracker: Extension key is null or empty. Ignored extension.", "Tracker: Extension key is null or empty.")
+                &&
+                check<ValueExtensionException>(value, "Tracker: Extension value is null or empty. Ignored extension.", "Tracker: Extension value is null or empty.");
+        }
 
-			public ExtensionException(string message, ExtensionExceptionType Type) : base(message){
-				this.Type = Type;
-			}
-		}
+        private bool check<T>(System.Object value, string message, string strict_message) where T : TrackerException{
+            bool r = true;
+
+            if (value == null || (value.GetType() == typeof(string) && ((string) value) == "") || (value.GetType() == typeof(float) && float.IsNaN((float)value))) {
+                r = false;
+                if (strictMode) {
+                    throw (T) Activator.CreateInstance(typeof(T), strict_message);
+                }else {
+                    Debug.LogWarning (message);
+                }
+            }
+
+            return r;
+        }
 	}
 }
