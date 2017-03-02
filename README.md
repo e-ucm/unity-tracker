@@ -8,7 +8,7 @@ After a game is developed, a common need is to know how the players play, what i
 
 ## Installation
 1. Clone the repository in your **Assets** folder inside your Unity project
-1. Add the [Tracker MonoBehaviour](https://github.com/e-ucm/unity-tracker/blob/master/Assets/Tracker.cs) into an empty object in your first scene (the component will be kept across scenes)
+1. Add the [Tracker MonoBehaviour](https://github.com/e-ucm/unity-tracker/blob/master/Tracker/Tracker.cs) into an empty object in your first scene (the component will be kept across scenes)
 	![unitytracker add tracker](https://cloud.githubusercontent.com/assets/5657407/21893124/07974d46-d8da-11e6-9168-e1cb0e7547f1.png)
 1. Configure the component parameters
   1. **Flush interval**: time between each flush of the tracker to the server. If this is set to `-1`, it will be necessary to call `T().RequestFlush()` to send traces to the server.
