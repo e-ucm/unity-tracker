@@ -19,19 +19,22 @@ using System;
 using System.Collections.Generic;
 using SimpleJSON;
 
-public class DefaultTraceFromat : Tracker.ITraceFormatter
-{
-	public string Serialize (List<string> traces)
+namespace RAGE.Analytics.Formats
+{   
+	public class DefaultTraceFromat : Tracker.ITraceFormatter
 	{
-		string result = "";
-		foreach (string trace in traces) {
-			result += trace + "\n";
+		public string Serialize (List<string> traces)
+		{
+			string result = "";
+			foreach (string trace in traces) {
+				result += trace + "\n";
+			}
+			return result;
 		}
-		return result;
+
+		public void StartData(JSONNode data)
+		{
+
+		}
 	}
-
-    public void StartData(JSONNode data)
-    {
-
-    }
 }
