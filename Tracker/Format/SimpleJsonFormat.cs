@@ -28,26 +28,27 @@ using System;
 using System.Collections.Generic;
 using SimpleJSON;
 
-public class SimpleJsonFormat : Tracker.ITraceFormatter
+namespace RAGE.Analytics.Formats
 {
-
-	public string Serialize (List<string> traces)
+	public class SimpleJsonFormat : Tracker.ITraceFormatter
 	{
-		String result = "[";	
-		foreach (String trace in traces){
-			string[] parts = trace.Split(',');
-			result += "{\"event\":\"" + parts[1] + "\", " +
-				"\"target\":\"" + parts[2] + "\"" +
-				( parts.Length == 4 ? ",\"value\":\"" + parts[3] + "\"" : "")
-				+ "},";
+
+		public string Serialize (List<string> traces)
+		{
+			String result = "[";	
+			foreach (String trace in traces){
+				string[] parts = trace.Split(',');
+				result += "{\"event\":\"" + parts[1] + "\", " +
+					"\"target\":\"" + parts[2] + "\"" +
+					( parts.Length == 4 ? ",\"value\":\"" + parts[3] + "\"" : "")
+					+ "},";
+			}
+			return result.Substring(0, result.Length - 1) + "]";
 		}
-		return result.Substring(0, result.Length - 1) + "]";
+
+		public void StartData(JSONNode data)
+		{
+
+		}
 	}
-
-    public void StartData(JSONNode data)
-    {
-
-    }
 }
-
-
