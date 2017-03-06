@@ -7,7 +7,7 @@
  * 2020 research and innovation programme under grant agreement No 644187.
  * You may obtain a copy of the License at
  * 
- *     http://www.apache.org/licenses/LICENSE-2.0 (link is external)
+ *	 http://www.apache.org/licenses/LICENSE-2.0 (link is external)
  * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -51,7 +51,7 @@ namespace RAGE.Analytics
 		public bool rawCopy;
 		private string rawFilePath;
 
-        public bool strictMode = true;
+		public static bool strictMode = true;
 
 		private ITraceFormatter traceFormatter;
 		private bool sending;
@@ -76,14 +76,14 @@ namespace RAGE.Analytics
 		private FlushListener flushListener;
 		private static Tracker tracker;
 		private static String filePath;
-        public static string FilePath{
-            get {
-                if (filePath == null)
-                    GeneratePath ();
-                
-                return filePath;
-            }
-        }
+		public static string FilePath{
+			get {
+				if (filePath == null)
+					GeneratePath ();
+				
+				return filePath;
+			}
+		}
 		private StartLocalStorageListener startLocalStorageListener;
 		private Dictionary<string, System.Object> extensions = new Dictionary<string, System.Object>();
 
@@ -138,9 +138,9 @@ namespace RAGE.Analytics
 			connecting = false;
 		}
 		
-        /// <summary>
-        /// DONT USE THIS METHOD. UNITY INTERNAL MONOBEHAVIOUR.
-        /// </summary>
+		/// <summary>
+		/// DONT USE THIS METHOD. UNITY INTERNAL MONOBEHAVIOUR.
+		/// </summary>
 		public void Start ()
 		{
 			switch (traceFormat) {
@@ -178,10 +178,10 @@ namespace RAGE.Analytics
 			UnityEngine.Object.DontDestroyOnLoad (this);
 		}
 
-        /// <summary>
-        /// Generates the path used for storing the traces in.
-        /// </summary>
-        /// <returns>The path.</returns>
+		/// <summary>
+		/// Generates the path used for storing the traces in.
+		/// </summary>
+		/// <returns>The path.</returns>
 		public static string GeneratePath ()
 		{
 			String path = Application.persistentDataPath;
@@ -198,9 +198,9 @@ namespace RAGE.Analytics
 			return path;
 		}
 		
-        /// <summary>
-        /// DONT USE THIS METHOD. UNITY INTERNAL MONOBEHAVIOUR.
-        /// </summary>
+		/// <summary>
+		/// DONT USE THIS METHOD. UNITY INTERNAL MONOBEHAVIOUR.
+		/// </summary>
 		public void Update ()
 		{
 			float delta = Time.deltaTime;
@@ -363,7 +363,7 @@ namespace RAGE.Analytics
 			}
 			catch (Exception e)
 			{
-				Debug.Log("Error writting raw copy. Exception: " + e);
+				Debug.LogWarning("Error writting raw copy. Exception: " + e);
 			}
 	#endif
 		}
@@ -472,39 +472,13 @@ namespace RAGE.Analytics
 		[Obsolete("Use ActionTrace instead. Never intended to be public. Has to receive a csv with specific format.")]
 		public void Trace (string trace)
 		{
-            /*if (strictMode) {
-                Debug.LogWarning ("Tracker: Trace() method is Obsolete. Ignoring");
-                return;
-            }*/
+			if (trace == null || trace == "")
+				throw new TraceException ("Trace is be empty or null");
+			
+			string[] parts = Utils.parseCSV (trace);
 
-            if (trace == null || trace == "")
-                throw new TraceException ("Trace is be empty or null");
-
-            List<string> p = new List<string> ();
-
-            bool escape = false;
-            int start = 0;
-            for (int i = 0; i < trace.Length; i++) {
-                switch (trace [i]) {
-                case '\\':
-                    escape = true;
-                    break;
-                case ',':
-                    if (!escape) {
-                        p.Add (trace.Substring (start, i-start).Replace("\\,",","));
-                        start = i + 1;
-                    } else
-                        escape = false;
-                    break;
-                default: break;
-                }
-            }
-            p.Add(trace.Substring(start).Replace("\\,",","));
-
-            string[] parts = p.ToArray ();
-
-            if(parts.Length != 3)
-                throw new TraceException ("Trace length must be 3 (verb,target_type,target_id)");
+			if(parts.Length != 3)
+				throw new TraceException ("Trace length must be 3 (verb,target_type,target_id)");
 
 			EnqueueTrace (trace);
 		}
@@ -545,18 +519,18 @@ namespace RAGE.Analytics
 		[Obsolete("Use ActionTrace instead. Never intended to be public. Has to receive values in specific order.")]
 		public void Trace (params string[] values)
 		{
-            /*if (strictMode) {
-                Debug.LogWarning ("Tracker: Trace() method is Obsolete. Ignoring");
-                return;
-            } else {*/
-                if (values.Length != 3)
-                    throw new TraceException ("Tracker: Trace must have at least 3 arguments: a verb, a target type and a target ID");
+			/*if (strictMode) {
+				Debug.LogWarning ("Tracker: Trace() method is Obsolete. Ignoring");
+				return;
+			} else {*/
+				if (values.Length != 3)
+					throw new TraceException ("Tracker: Trace must have at least 3 arguments: a verb, a target type and a target ID");
 
-                for(int i = 0; i < values.Length; i++) {
-                    if (!check<TraceException> (values [i], "Tracker: Trace param " + i + " is null or empty, ignoring trace.", "Tracker: Trace param " + i + " is null or empty"))
-                        return;
-                }
-            //}
+				for(int i = 0; i < values.Length; i++) {
+					if (!Utils.check<TraceException> (values [i], "Tracker: Trace param " + i + " is null or empty, ignoring trace.", "Tracker: Trace param " + i + " is null or empty"))
+						return;
+				}
+			//}
 
 			EnqueueTrace (values);
 		}
@@ -578,14 +552,14 @@ namespace RAGE.Analytics
 		/// <param name="values">Values of the trace.</param>
 		public void ActionTrace (string verb, string target_type, string target_id)
 		{
-            bool trace = true;
+			bool trace = true;
 
-            trace &= check<TraceException> (verb, "Tracker: Trace verb can't be null, ignoring. ", "Tracker: Trace verb can't be null.");
-            trace &= check<TraceException> (target_type, "Tracker: Trace Target type can't be null, ignoring. ", "Tracker: Trace Target type can't be null.");
-            trace &= check<TraceException> (target_id, "Tracker: Trace Target ID can't be null, ignoring. ", "Tracker: Trace Target ID can't be null.");
+			trace &= Utils.check<TraceException> (verb, "Tracker: Trace verb can't be null, ignoring. ", "Tracker: Trace verb can't be null.");
+			trace &= Utils.check<TraceException> (target_type, "Tracker: Trace Target type can't be null, ignoring. ", "Tracker: Trace Target type can't be null.");
+			trace &= Utils.check<TraceException> (target_id, "Tracker: Trace Target ID can't be null, ignoring. ", "Tracker: Trace Target ID can't be null.");
 
-            if(trace)
-			    EnqueueTrace (verb,target_type,target_id);
+			if(trace)
+				EnqueueTrace (verb,target_type,target_id);
 		}
 
 		public enum Verb
@@ -639,187 +613,164 @@ namespace RAGE.Analytics
 			Progress
 		}
 
-        /// <summary>
-        /// Sets if the following trace has been a success, including this value to the extensions.
-        /// </summary>
-        /// <param name="success">If set to <c>true</c> means it has been a success.</param>
+		/// <summary>
+		/// Sets if the following trace has been a success, including this value to the extensions.
+		/// </summary>
+		/// <param name="success">If set to <c>true</c> means it has been a success.</param>
 		public void setSuccess(bool success)
 		{
-            addExtension(Extension.Success.ToString().ToLower(), success.ToString().ToLower());
+			addExtension(Extension.Success.ToString().ToLower(), success.ToString().ToLower());
 		}
 
-        /// <summary>
-        /// Sets the score of the following trace, including it to the extensions.
-        /// </summary>
-        /// <param name="score">Score, (Recomended between 0 and 1)</param>
+		/// <summary>
+		/// Sets the score of the following trace, including it to the extensions.
+		/// </summary>
+		/// <param name="score">Score, (Recomended between 0 and 1)</param>
 		public void setScore(float score)
 		{
-            if(score < 0 || score > 1)
-                Debug.LogWarning("Tracker: Score recommended between 0 and 1 (Current: " + score + ")");
-            
-            setVar(Extension.Score.ToString().ToLower(), score);
+			if(score < 0 || score > 1)
+				Debug.LogWarning("Tracker: Score recommended between 0 and 1 (Current: " + score + ")");
+			
+			setVar(Extension.Score.ToString().ToLower(), score);
 		}
 
-        /// <summary>
-        /// Sets the response. If the player chooses between alternatives, the response should be the selected alternative.
-        /// </summary>
-        /// <param name="response">Response.</param>
+		/// <summary>
+		/// Sets the response. If the player chooses between alternatives, the response should be the selected alternative.
+		/// </summary>
+		/// <param name="response">Response.</param>
 		public void setResponse(string response)
 		{
-            addExtension(Extension.Response.ToString().ToLower(), response);
+			addExtension(Extension.Response.ToString().ToLower(), response);
 		}
 
-        /// <summary>
-        /// Sets the completion of the following trace extensions. Completion specifies if something has been completed.
-        /// </summary>
-        /// <param name="completion">If set to <c>true</c> the trace action has been completed.</param>
+		/// <summary>
+		/// Sets the completion of the following trace extensions. Completion specifies if something has been completed.
+		/// </summary>
+		/// <param name="completion">If set to <c>true</c> the trace action has been completed.</param>
 		public void setCompletion(bool completion)
 		{
-            addExtension(Extension.Completion.ToString().ToLower(), completion.ToString().ToLower());
+			addExtension(Extension.Completion.ToString().ToLower(), completion.ToString().ToLower());
 		}
 
-        /// <summary>
-        /// Sets the progress of the action. 
-        /// </summary>
-        /// <param name="progress">Progress. (Recomended between 0 and 1)</param>
+		/// <summary>
+		/// Sets the progress of the action. 
+		/// </summary>
+		/// <param name="progress">Progress. (Recomended between 0 and 1)</param>
 		public void setProgress(float progress)
 		{
-            if(progress < 0 || progress > 1)
-                Debug.LogWarning("Tracker: Progress recommended between 0 and 1 (Current: " + progress + ")");
-            
-            setVar(Extension.Progress.ToString().ToLower(), progress);
+			if(progress < 0 || progress > 1)
+				Debug.LogWarning("Tracker: Progress recommended between 0 and 1 (Current: " + progress + ")");
+			
+			setVar(Extension.Progress.ToString().ToLower(), progress);
 		}
 
-        /// <summary>
-        /// Sets the coords where the trace takes place.
-        /// </summary>
-        /// <param name="x">The x coordinate.</param>
-        /// <param name="y">The y coordinate.</param>
-        /// <param name="z">The z coordinate.</param>
+		/// <summary>
+		/// Sets the coords where the trace takes place.
+		/// </summary>
+		/// <param name="x">The x coordinate.</param>
+		/// <param name="y">The y coordinate.</param>
+		/// <param name="z">The z coordinate.</param>
 		public void setPosition(float x, float y, float z)
 		{
-            if (float.IsNaN(x) || float.IsNaN(y) || float.IsNaN(z)) {
-                if (strictMode)
-                    throw new ValueExtensionException ("Tracker: x, y or z cant be null.");
-                else{
-                    Debug.Log ("Tracker: x, y or z cant be null, ignoring.");
-                    return;
-                }
-            }
+			if (float.IsNaN(x) || float.IsNaN(y) || float.IsNaN(z)) {
+				if (strictMode)
+					throw new ValueExtensionException ("Tracker: x, y or z cant be null.");
+				else{
+					Debug.Log ("Tracker: x, y or z cant be null, ignoring.");
+					return;
+				}
+			}
 
-            addExtension(Extension.Position.ToString().ToLower(), "{\"x\":" + x + ", \"y\": " + y + ", \"z\": " + z + "}");
+			addExtension(Extension.Position.ToString().ToLower(), "{\"x\":" + x + ", \"y\": " + y + ", \"z\": " + z + "}");
 		}
 
-        /// <summary>
-        /// Sets the health of the player's character when the trace occurs. 
-        /// </summary>
-        /// <param name="health">Health.</param>
+		/// <summary>
+		/// Sets the health of the player's character when the trace occurs. 
+		/// </summary>
+		/// <param name="health">Health.</param>
 		public void setHealth(float health)
-        {
-            if(check<ValueExtensionException>(health, "Tracker: Health cant be null, ignoring.", "Tracker: Health cant be null."))
-                addExtension(Extension.Health.ToString().ToLower(), health);
+		{
+			if(Utils.check<ValueExtensionException>(health, "Tracker: Health cant be null, ignoring.", "Tracker: Health cant be null."))
+				addExtension(Extension.Health.ToString().ToLower(), health);
 		}
 
-        /// <summary>
-        /// Adds a variable to the extensions.
-        /// </summary>
-        /// <param name="id">Identifier.</param>
-        /// <param name="value">Value.</param>
+		/// <summary>
+		/// Adds a variable to the extensions.
+		/// </summary>
+		/// <param name="id">Identifier.</param>
+		/// <param name="value">Value.</param>
 		public void setVar(string id, string value)
 		{
-            addExtension(id, value);
+			addExtension(id, value);
 		}
 
-        /// <summary>
-        /// Adds a variable to the extensions.
-        /// </summary>
-        /// <param name="key">Key.</param>
-        /// <param name="value">Value.</param>
-        public void setVar(string key, int value){
-            addExtension (key, value.ToString ("G", System.Globalization.CultureInfo.InvariantCulture));
-        }
+		/// <summary>
+		/// Adds a variable to the extensions.
+		/// </summary>
+		/// <param name="key">Key.</param>
+		/// <param name="value">Value.</param>
+		public void setVar(string key, int value){
+			addExtension (key, value.ToString ("G", System.Globalization.CultureInfo.InvariantCulture));
+		}
 
-        /// <summary>
-        /// Adds a variable to the extensions.
-        /// </summary>
-        /// <param name="key">Key.</param>
-        /// <param name="value">Value.</param>
+		/// <summary>
+		/// Adds a variable to the extensions.
+		/// </summary>
+		/// <param name="key">Key.</param>
+		/// <param name="value">Value.</param>
 		public void setVar(string key, float value){
-            addExtension (key, value.ToString ("G", System.Globalization.CultureInfo.InvariantCulture));
+			addExtension (key, value.ToString ("G", System.Globalization.CultureInfo.InvariantCulture));
 		}
 
-        /// <summary>
-        /// Adds a variable to the extensions.
-        /// </summary>
-        /// <param name="key">Key.</param>
-        /// <param name="value">Value.</param>
+		/// <summary>
+		/// Adds a variable to the extensions.
+		/// </summary>
+		/// <param name="key">Key.</param>
+		/// <param name="value">Value.</param>
 		public void setVar(string key, double value){
-            addExtension (key, value.ToString ("G", System.Globalization.CultureInfo.InvariantCulture));
+			addExtension (key, value.ToString ("G", System.Globalization.CultureInfo.InvariantCulture));
 		}
 
 
-        /// <summary>
-        /// Adds a extension to the extension list.
-        /// </summary>
-        /// <param name="key">Key.</param>
-        /// <param name="value">Value.</param>
-        [Obsolete("Use setVar instead. Never intended to be public.")]
-        public void setExtension(string key, float value){
-            addExtension (key, value.ToString ("G", System.Globalization.CultureInfo.InvariantCulture));
-        }
+		/// <summary>
+		/// Adds a extension to the extension list.
+		/// </summary>
+		/// <param name="key">Key.</param>
+		/// <param name="value">Value.</param>
+		[Obsolete("Use setVar instead. Never intended to be public.")]
+		public void setExtension(string key, float value){
+			addExtension (key, value.ToString ("G", System.Globalization.CultureInfo.InvariantCulture));
+		}
 
-        /// <summary>
-        /// Adds a extension to the extension list.
-        /// </summary>
-        /// <param name="key">Key.</param>
-        /// <param name="value">Value.</param>
-        [Obsolete("Use setVar instead. Never intended to be public.")]
-        public void setExtension(string key, double value){
-            addExtension (key, value.ToString ("G", System.Globalization.CultureInfo.InvariantCulture));
-        }
+		/// <summary>
+		/// Adds a extension to the extension list.
+		/// </summary>
+		/// <param name="key">Key.</param>
+		/// <param name="value">Value.</param>
+		[Obsolete("Use setVar instead. Never intended to be public.")]
+		public void setExtension(string key, double value){
+			addExtension (key, value.ToString ("G", System.Globalization.CultureInfo.InvariantCulture));
+		}
 
-        /// <summary>
-        /// Adds a extension to the extension list.
-        /// </summary>
-        /// <param name="key">Key.</param>
-        /// <param name="value">Value.</param>
-        [Obsolete("Use setVar instead. Never intended to be public.")]
+		/// <summary>
+		/// Adds a extension to the extension list.
+		/// </summary>
+		/// <param name="key">Key.</param>
+		/// <param name="value">Value.</param>
+		[Obsolete("Use setVar instead. Never intended to be public.")]
 		public void setExtension(string key, System.Object value)
 		{
-            addExtension (key, value);
+			addExtension (key, value);
 		}
 
-        private void addExtension(string key, System.Object value)
-        {
-            if (checkExtension (key, value)) {
-                if (extensions.ContainsKey (key))
-                    extensions [key] = value;
-                else
-                    extensions.Add (key, value);
-            }
-        }
-
-
-        private bool checkExtension(string key, System.Object value){
-            return 
-                check<KeyExtensionException>(key, "Tracker: Extension key is null or empty. Ignored extension.", "Tracker: Extension key is null or empty.")
-                &&
-                check<ValueExtensionException>(value, "Tracker: Extension value is null or empty. Ignored extension.", "Tracker: Extension value is null or empty.");
-        }
-
-        private bool check<T>(System.Object value, string message, string strict_message) where T : TrackerException{
-            bool r = true;
-
-            if (value == null || (value.GetType() == typeof(string) && ((string) value) == "") || (value.GetType() == typeof(float) && float.IsNaN((float)value))) {
-                r = false;
-                if (strictMode) {
-                    throw (T) Activator.CreateInstance(typeof(T), strict_message);
-                }else {
-                    Debug.LogWarning (message);
-                }
-            }
-
-            return r;
-        }
+		private void addExtension(string key, System.Object value)
+		{
+			if (Utils.checkExtension (key, value)) {
+				if (extensions.ContainsKey (key))
+					extensions [key] = value;
+				else
+					extensions.Add (key, value);
+			}
+		}
 	}
 }
