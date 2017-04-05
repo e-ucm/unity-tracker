@@ -72,6 +72,8 @@ namespace RAGE.Analytics
 		public string host;
 		public string trackingCode;
 		public Boolean debug = false;
+		public string username;
+		public string password;
 		private StartListener startListener;
 		private FlushListener flushListener;
 		private static Tracker tracker;
@@ -216,7 +218,7 @@ namespace RAGE.Analytics
 
 			if (checkInterval >= 0) {
 				nextCheck -= delta;
-				if (!useMainStorage && !connecting && nextCheck <= 0 && mainStorage.IsAvailable ()) {
+				if (!useMainStorage && !connecting && !connected && nextCheck <= 0 && mainStorage.IsAvailable ()) {
 					connecting = true;
 					if (debug) {
 						Debug.Log ("Starting main storage");
@@ -250,7 +252,11 @@ namespace RAGE.Analytics
 				}
 				
 				if (mainStorage.IsAvailable ()) {
-					mainStorage.Start (startListener);
+					if (!String.IsNullOrEmpty (username)) {
+						mainStorage.Login (username, password, new LoginStartListener (this, mainStorage));
+					} else {
+						mainStorage.Start (startListener);
+					}
 				} 
 				if (backupStorage != null) {
 					backupStorage.Start (startLocalStorageListener);
@@ -394,6 +400,59 @@ namespace RAGE.Analytics
 					Debug.Log("Error " + error);
 				}
 				tracker.SetConnected (false);
+			}
+		}
+
+		public class LoginStartListener : Net.IRequestListener
+		{
+			protected Tracker tracker;
+			protected Storage storage;
+			private ITraceFormatter traceFormatter;
+
+			public LoginStartListener (Tracker tracker, Storage storage)
+			{
+				this.tracker = tracker;
+				this.storage = storage;
+			}
+
+			public void SetTraceFormatter (ITraceFormatter traceFormatter)
+			{
+				this.traceFormatter = traceFormatter;
+			}
+
+			public void Result (string data)
+			{
+				if (tracker.debug) {
+					Debug.Log ("Logged successfull");
+				}
+				if (!String.IsNullOrEmpty(data)) {
+					try {
+						JSONNode dict = JSONNode.Parse (data);
+						if(tracker.debug){
+							Debug.Log("Bearer " + dict["user"]["token"]);
+						}
+						if(this.storage.GetType() == typeof(NetStorage))
+							((NetStorage) this.storage).setAuthorization("Bearer " + dict["user"]["token"]);
+						
+					} catch (Exception e) {
+						Debug.LogError (e);
+					}
+				}
+
+				storage.Start (tracker.startListener);
+			}
+
+			public void Error (string error)
+			{
+				if (tracker.debug) {
+					Debug.Log ("Error " + error);
+				}
+				tracker.SetMainStorageConnected (false);
+			}
+
+			protected virtual void ProcessData (JSONNode data)
+			{
+				traceFormatter.StartData (data);
 			}
 		}
 

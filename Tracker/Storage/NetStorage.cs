@@ -45,7 +45,6 @@ namespace RAGE.Analytics.Storages
 			this.net = new Net (behaviour);
 			this.host = host;
 			this.trackingCode = trackingCode;
-			this.authorization = "a:";
 
 			string filePath = Application.dataPath + "/Assets/track.txt";
 
@@ -87,16 +86,33 @@ namespace RAGE.Analytics.Storages
 			trackHeaders.Add ("Content-Type", "application/json");
 		}
 
+		public void Login(string username, string password, Net.IRequestListener loginListener){
+			string [] splitted = host.Split ('/');
+			string [] host_splitted = splitted [2].Split (':');
+			string domain = host_splitted [0];
+			int port = (host_splitted.Length > 1) ? int.Parse(host_splitted[1]) : (splitted[0] == "https:" ? 443 : 80);
+
+			string body = "{\"username\":\"" + username + "\",\"password\":\"" + password + "\"}";
+
+			net.POST (splitted[0] + "//" + domain + (port != 80 && port != 443 ? ":" + port : "") + "/api/login", System.Text.Encoding.UTF8.GetBytes (body), trackHeaders, loginListener);
+		}
+
 		public void Start (Net.IRequestListener startListener)
 		{
 			Dictionary<string,string> headers = new Dictionary<string, string> ();
-			headers.Add ("Authorization", authorization);		
+			if(!String.IsNullOrEmpty(authorization))
+				headers.Add ("Authorization", authorization);
+			
 			net.POST (host + start + trackingCode, null, headers, netStartListener);
 		}
 
 		public void Send (String data, Net.IRequestListener flushListener)
 		{
 			net.POST (host + track, System.Text.Encoding.UTF8.GetBytes (data), trackHeaders, flushListener);
+		}
+
+		public void setAuthorization(string authorization){
+			this.authorization = authorization;
 		}
 
 		private void SetAuthToken (string authToken)

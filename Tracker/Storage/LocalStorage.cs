@@ -36,6 +36,10 @@ namespace RAGE.Analytics.Storages
 		public void SetTracker (Tracker tracker)
 		{
 		}
+
+		public void Login (string username, string password, Net.IRequestListener loginListener){
+			loginListener.Result ("");
+		}
 			
 		public void Start (Net.IRequestListener startListener)
 		{
