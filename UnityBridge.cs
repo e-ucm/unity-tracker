@@ -78,6 +78,16 @@ namespace AssetPackage
             File.WriteAllText(Path.Combine(StorageDir, fileId), fileData);
         }
         /// <summary>
+        /// Appends fileData to the given fileId
+        /// </summary>
+        ///
+        /// <param name="fileId">   The file identifier to delete. </param>
+        /// <param name="fileData"> Information describing the file. </param>
+        public void Append(string fileId, string fileData)
+        {
+            File.AppendAllText(Path.Combine(StorageDir, fileId), fileData);
+        }
+        /// <summary>
         /// Loads the given file.
         /// </summary>
         ///
