@@ -38,13 +38,13 @@ namespace RAGE.Analytics
 		public static bool strictMode = true;
 		private float nextFlush;
 		private bool flushRequested = false;
-		public float flushInterval = -1;
+		public float flushInterval = 3;
 		[Range(3, int.MaxValue)]
 		public float checkInterval = 3;
 		private float nextCheck;
-		public string storageType = "local";
-		public string traceFormat = "csv";
-		public string host;
+		public string storageType = "net";
+		public string traceFormat = "xapi";
+		public string host = "https://analytics.e-ucm.es/";
 		public string trackingCode;
 		public Boolean debug = false;
 
