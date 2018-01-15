@@ -19,17 +19,17 @@ After a game is developed, a common need is to know how the players play, what i
   1. **Debug**: Enable to see tracker messages in the Unity console.
 1. Send traces
 
-The configuration process is very simple. If a game is exported, a track.txt file has to be created in the root project directory, into an Asset folder.
-
-The [track.txt](https://github.com/e-ucm/QuizDemo/blob/master/Assets/Assets/track.txt) file must be edited changing the `host` and `trackingCode` 
-with the correct values. Normaly the `host` looks like this `http://localhost:3000/api/proxy/gleaner/collector/` and the `trackingCode` normally looks like [this](https://github.com/e-ucm/rage-analytics/wiki/Tracking-code).
-
-<b>Note</b>: The traces file are saved in `C:/Users/[username]/AppData/LocalLow/[Company Name]/[Product Name]` under the name `traces.csv`
+<b>Note</b>: The traces file are saved in `C:/Users/[username]/AppData/LocalLow/[Company Name]/[Product Name]` under the name `[UNIX Timestamp].log`
 
 If you are not sure or you don’t know your company and product name, you can check and change it the path using the Unity menu:
 `Edit > Project Settings > Player`
 ![inspector unity](https://cloud.githubusercontent.com/assets/5657407/21893123/07972abe-d8da-11e6-8f79-94903f62dced.png)
 
+## About Unity tracker core (csharp-tracker)
+
+Unity tracker has been unified with the DotNET tracker in a project called csharp tracker. This project (Unity tracker) contains a wrapper and a prefab that make easier the usage of the tracker, in a similar way as it was in the previous versions of this project. If the features of this wrapper don't fit your needs, you can develop your own wrapper by directly using the ![csharp-tracker](https://github.com/e-ucm/csharp-tracker).
+
+The API has changed slightly, but the previous API still is supported (as deprecated) in the newest version of the tracker. If a method  is deprecated, the new method that support that call will be shown in the deprecated comment.
 
 ## MonoBehaviour Example
 
