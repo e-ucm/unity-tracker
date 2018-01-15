@@ -27,7 +27,7 @@ If you are not sure or you don’t know your company and product name, you can c
 
 ## About Unity tracker core (csharp-tracker)
 
-Unity tracker has been unified with the DotNET tracker in a project called csharp tracker. This project (Unity tracker) contains a wrapper and a prefab that make easier the usage of the tracker, in a similar way as it was in the previous versions of this project. If the features of this wrapper don't fit your needs, you can develop your own wrapper by directly using the ![csharp-tracker](https://github.com/e-ucm/csharp-tracker).
+Unity tracker has been unified with the DotNET tracker in a project called csharp tracker. This project (Unity tracker) contains a wrapper and a prefab that make easier the usage of the tracker, in a similar way as it was in the previous versions of this project. If the features of this wrapper don't fit your needs, you can develop your own wrapper by directly using the [csharp-tracker](https://github.com/e-ucm/csharp-tracker).
 
 The API has changed slightly, but the previous API still is supported (as deprecated) in the newest version of the tracker. If a method  is deprecated, the new method that support that call will be shown in the deprecated comment.
 
