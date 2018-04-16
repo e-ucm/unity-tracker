@@ -28,7 +28,7 @@ namespace AssetPackage
 	using System.Security.Cryptography.X509Certificates;
 	using UnityEngine;
 
-    public class UnityBridge : IBridge, IDataStorage, IWebServiceRequest, ILog
+    public class UnityBridge : IBridge, IDataStorage, IAppend, IWebServiceRequest, ILog
     {
 		readonly String StorageDir = Application.persistentDataPath;
         /// <summary>
@@ -78,16 +78,6 @@ namespace AssetPackage
             File.WriteAllText(Path.Combine(StorageDir, fileId), fileData);
         }
         /// <summary>
-        /// Appends fileData to the given fileId
-        /// </summary>
-        ///
-        /// <param name="fileId">   The file identifier to delete. </param>
-        /// <param name="fileData"> Information describing the file. </param>
-        public void Append(string fileId, string fileData)
-        {
-            File.AppendAllText(Path.Combine(StorageDir, fileId), fileData);
-        }
-        /// <summary>
         /// Loads the given file.
         /// </summary>
         ///
@@ -118,6 +108,21 @@ namespace AssetPackage
             }
             return false;
         }
+        #endregion
+
+        #region IDataStorage Members
+        
+        /// <summary>
+        /// Appends fileData to the given fileId
+        /// </summary>
+        ///
+        /// <param name="fileId">   The file identifier to delete. </param>
+        /// <param name="fileData"> Information describing the file. </param>
+        public void Append(string fileId, string fileData)
+        {
+            File.AppendAllText(Path.Combine(StorageDir, fileId), fileData);
+        }
+
         #endregion
 
         #region ILog Members
