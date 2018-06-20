@@ -92,18 +92,18 @@ Usage example for the tracking of an in-game quest. We decided to use a [Complet
 
 	// Completable
 	// Initialized
-	Tracker.T.completable.Initialized("MyGameQuestId", Completable.Quest);
+	Tracker.T.Completable.Initialized("MyGameQuestId", Completable.Quest);
 	
 	//...
 	
 	// Progressed
-	Tracker.T.completable.Progressed("MyGameQuestId", Completable.Quest, 0.8);
+	Tracker.T.Completable.Progressed("MyGameQuestId", Completable.Quest, 0.8);
 	
 	//...
 	
 	// Progressed
 	bool success = true;
-	Tracker.T.completable.Completed("MyGameQuestId", Completed, success);
+	Tracker.T.Completable.Completed("MyGameQuestId", Completed, success);
 
 ```
 
@@ -115,12 +115,12 @@ Usage example for the tracking the player's movement through some in-game screen
 	
 	// Accessible
 	// The player accessed the 'MainMenu' screen
-	Tracker.T.accessible.Accessed("MainMenu", Accessible.Screen);
+	Tracker.T.Accessible.Accessed("MainMenu", Accessible.Screen);
 	
 	//...
 	
 	// The player skipped a cutscene
-	Tracker.T.accessible.Skipped("Intro", Accessible.Cutscene);
+	Tracker.T.Accessible.Skipped("Intro", Accessible.Cutscene);
 
 ```
 
@@ -132,17 +132,17 @@ Usage example for the tracking the player's choices during a conversation:
 	
 	// Alternative
 	// The player selected the 'Dan' answer for the question 'What's his name?'
-	Tracker.T.alternative.Selected("What's his name?", "Dan", Alternative.Question);
+	Tracker.T.Alternative.Selected("What's his name?", "Dan", Alternative.Question);
 	
 	//...
 	
 	// The player selected 'OK' for the question 'Do you want it?'
-	Tracker.T.alternative.Selected("Do you want to start right now?", "OK", Alternative.Question);
+	Tracker.T.Alternative.Selected("Do you want to start right now?", "OK", Alternative.Question);
 
 	//...
 	
 	// The player unlocked 'Combat Mode' for the menu 'Menues/Start'
-	Tracker.T.alternative.Unlocked("Menues/Start", "Combat Mode", Alternative.Menu);
+	Tracker.T.Alternative.Unlocked("Menues/Start", "Combat Mode", Alternative.Menu);
 	
 ```
 
@@ -154,12 +154,12 @@ Usage example for the tracking the player's with a NPC villager and using a heal
 	
 	// Tracked Game Object
 	// The player interacted with a Non Playable Character
-	Tracker.T.trackedGameObject.Interacted("NPC/Villager", TrackedGameObject.Npc);
+	Tracker.T.TrackedGameObject.Interacted("NPC/Villager", TrackedGameObject.Npc);
 	
 	//...
 	
 	// The player used a health potion
-	Tracker.T.trackedGameObject.Used("Item/HealthPotion", TrackedGameObject.Item);
+	Tracker.T.TrackedGameObject.Used("Item/HealthPotion", TrackedGameObject.Item);
 	
 ```
 
