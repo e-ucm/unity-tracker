@@ -6,6 +6,3 @@ logs
 pids
 *.pid
 *.seed
-
-# Meta Unity files
-*.meta

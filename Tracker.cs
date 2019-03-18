@@ -105,7 +105,7 @@ namespace RAGE.Analytics
 				BackupStorage = rawCopy
 			};
 
-			TrackerAsset.Instance.Bridge = new UnityBridge();
+            TrackerAsset.Instance.Bridge = new InternalLogUnityBridge();
 			TrackerAsset.Instance.Settings = tracker_settings;
 		}
         
